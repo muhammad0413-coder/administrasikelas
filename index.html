@@ -1760,6 +1760,43 @@
       lucide.createIcons();
     };
 
+    window.handleAuthSubmit = async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      const btn = document.getElementById('auth-submit-btn');
+      btn.disabled = true;
+
+      try {
+        if (authMode === 'register') {
+          const namaGuru = document.getElementById('auth-name').value.trim();
+          const cred = await createUserWithEmailAndPassword(auth, email, password);
+          await setDoc(doc(db, 'users', cred.user.uid, 'settings', 'general'), {
+            ...appSettings,
+            namaGuru: namaGuru || 'Guru Kelas'
+          });
+          showToast('Pendaftaran akun berhasil!');
+        } else {
+          await signInWithEmailAndPassword(auth, email, password);
+          showToast('Berhasil masuk ke sistem');
+        }
+      } catch (err) {
+        console.error(err);
+        let msg = 'Autentikasi gagal: ' + err.message;
+        if (err.code === 'auth/invalid-credential') msg = 'Email atau kata sandi salah.';
+        if (err.code === 'auth/email-already-in-use') msg = 'Email sudah terdaftar. Silakan masuk.';
+        if (err.code === 'auth/unauthorized-domain') msg = 'Domain belum didaftarkan di Authorized Domains Firebase.';
+        showToast(msg, 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    window.handleLogout = async () => {
+      await signOut(auth);
+      showToast('Anda telah keluar dari aplikasi');
+    };
+
     window.handleGoogleLogin = async () => {
       const btn = document.getElementById('google-login-btn');
       btn.disabled = true;
@@ -1810,6 +1847,37 @@
       if (err && err.code) {
         showToast('Gagal masuk Google: ' + err.message, 'error');
       }
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      if (user) {
+        document.getElementById('auth-section').classList.add('hidden');
+        document.getElementById('app-section').classList.remove('hidden');
+        document.getElementById('user-email-display').textContent = user.email || user.displayName || 'Akun Guru';
+
+        isAdminUser = ADMIN_EMAILS.includes((user.email || '').toLowerCase());
+        activeTargetUid = user.uid;
+        const adminNav = document.getElementById('nav-admin-panel');
+        if (adminNav) adminNav.classList.toggle('hidden', !isAdminUser);
+
+        // Simpan metadata ringkas di dokumen root users/{uid} agar terbaca oleh Admin
+        try {
+          await setDoc(doc(db, 'users', user.uid), {
+            email: user.email || '',
+            displayName: user.displayName || '',
+            lastLoginAt: new Date().toISOString()
+          }, { merge: true });
+        } catch (e) {
+          console.warn('Metadata user root dilewati:', e);
+        }
+
+        await initUserData();
+      } else {
+        document.getElementById('auth-section').classList.remove('hidden');
+        document.getElementById('app-section').classList.add('hidden');
+      }
+      lucide.createIcons();
     });
 
     async function initUserData() {
