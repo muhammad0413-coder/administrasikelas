@@ -746,16 +746,28 @@
       }
       .print-barcode-sheet {
         border: 2px solid #000;
-        padding: 24px;
+        padding: 20px;
         text-align: center;
-        margin-top: 16px;
+        margin-top: 12px;
         border-radius: 8px;
+        page-break-inside: avoid;
       }
-      .print-barcode-sheet img,
-      .print-barcode-sheet canvas {
-        width: 280px !important;
-        height: 280px !important;
+      .print-barcode-sheet.portrait img,
+      .print-barcode-sheet.portrait canvas {
+        width: 340px !important;
+        height: 340px !important;
         margin: 18px auto;
+        display: block;
+      }
+      .print-barcode-sheet.landscape {
+        padding: 14px 20px;
+        margin-top: 8px;
+      }
+      .print-barcode-sheet.landscape img,
+      .print-barcode-sheet.landscape canvas {
+        width: 240px !important;
+        height: 240px !important;
+        margin: 10px auto;
         display: block;
       }
     }
@@ -785,10 +797,39 @@
         grid-template-columns: 1fr;
       }
       .content-area {
-        padding: 16px;
+        padding: 14px;
+      }
+      .topbar {
+        padding: 0 14px;
+        height: auto;
+        min-height: 64px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .hero-banner {
+        padding: 20px 18px;
+      }
+      .hero-banner h1 {
+        font-size: 1.25rem !important;
+      }
+      .card {
+        padding: 14px;
+      }
+      .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .stat-card {
+        padding: 14px;
+      }
+      #view-jurnal .grid-3 > .card {
+        grid-column: span 1 !important;
       }
     }
   </style>
+  <style id="dynamic-print-orientation"></style>
 </head>
 <body>
 
@@ -869,31 +910,35 @@
       <nav class="sidebar-nav">
         <button class="nav-item active" data-menu="dashboard" onclick="navigateTo('dashboard')">
           <i data-lucide="layout-dashboard" width="19"></i>
-          <span>1. Dashboard</span>
+          <span>Dashboard</span>
         </button>
         <button class="nav-item" data-menu="siswa" onclick="navigateTo('siswa')">
           <i data-lucide="users" width="19"></i>
-          <span>2. Data Siswa</span>
+          <span>Data Siswa</span>
         </button>
         <button class="nav-item" data-menu="absen" onclick="navigateTo('absen')">
           <i data-lucide="calendar-check" width="19"></i>
-          <span>3. Absen & Rekap F4</span>
+          <span>Absen & Rekap F4</span>
         </button>
         <button class="nav-item" data-menu="nilai" onclick="navigateTo('nilai')">
           <i data-lucide="award" width="19"></i>
-          <span>4. Daftar Nilai</span>
+          <span>Daftar Nilai</span>
         </button>
         <button class="nav-item" data-menu="jurnal" onclick="navigateTo('jurnal')">
           <i data-lucide="notebook-pen" width="19"></i>
-          <span>5. Jurnal Harian</span>
+          <span>Jurnal Harian</span>
         </button>
         <button class="nav-item" data-menu="perangkat" onclick="navigateTo('perangkat')">
           <i data-lucide="qr-code" width="19"></i>
-          <span>6. Perangkat Ajar</span>
+          <span>Perangkat Ajar</span>
         </button>
         <button class="nav-item" data-menu="pengaturan" onclick="navigateTo('pengaturan')">
           <i data-lucide="settings" width="19"></i>
-          <span>7. Pengaturan</span>
+          <span>Pengaturan</span>
+        </button>
+        <button id="nav-admin-panel" class="nav-item hidden" data-menu="admin" onclick="navigateTo('admin')" style="margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 14px;">
+          <i data-lucide="shield-check" width="19" style="color: #fbbf24;"></i>
+          <span>Panel Admin</span>
         </button>
       </nav>
 
@@ -1431,6 +1476,10 @@
 
                 <hr style="border: none; border-top: 1px solid var(--border-color); margin: 14px 0;" />
 
+                <div class="form-group">
+                  <label class="form-label">Label Jabatan Kiri (Kepala Sekolah / Kepala Madrasah)</label>
+                  <input type="text" id="set-ks-jabatan" class="form-control" placeholder="Kepala Sekolah" />
+                </div>
                 <div class="grid-2">
                   <div class="form-group">
                     <label class="form-label">Nama Kepala Sekolah</label>
@@ -1442,6 +1491,10 @@
                   </div>
                 </div>
 
+                <div class="form-group">
+                  <label class="form-label">Label Jabatan Kanan (Guru Kelas / Wali Kelas)</label>
+                  <input type="text" id="set-guru-jabatan" class="form-control" placeholder="Guru Kelas" />
+                </div>
                 <div class="grid-2">
                   <div class="form-group">
                     <label class="form-label">Nama Guru / Wali Kelas</label>
@@ -1476,6 +1529,46 @@
                 <i data-lucide="upload-cloud" width="17"></i> Impor / Restore Data (JSON)
                 <input type="file" accept=".json" class="hidden" onchange="restoreAllData(event)" />
               </label>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===============================================================
+             MODULE 8: PANEL ADMIN (AKSES SEMUA DATA AKUN GURU)
+             =============================================================== -->
+        <section id="view-admin" class="module-view hidden">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i data-lucide="shield-check" width="20" style="color: #d97706;"></i>
+                <span>Panel Admin — Akses Seluruh Data Kelas & Guru</span>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="loadAllAdminUsers()">
+                <i data-lucide="refresh-cw" width="15"></i> Muat Ulang Data Semua Akun
+              </button>
+            </div>
+            <p class="text-sm text-muted mb-4">
+              Sebagai Admin, Anda dapat melihat seluruh akun guru/kelas yang terdaftar di sistem, meninjau data siswa, absensi, nilai, jurnal, perangkat ajar, serta mengunduh cadangan data setiap kelas.
+            </p>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">No</th>
+                    <th>Nama Sekolah</th>
+                    <th>Kelas / TA</th>
+                    <th>Nama Guru / Wali Kelas</th>
+                    <th>Kepala Sekolah</th>
+                    <th>Jml Siswa</th>
+                    <th>Jml Jurnal</th>
+                    <th>Perangkat</th>
+                    <th style="width: 190px;">Aksi Admin</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-users-tbody">
+                  <tr><td colspan="9" class="empty-state">Memuat data seluruh akun...</td></tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </section>
@@ -1597,6 +1690,9 @@
 
     // Global State
     let currentUser = null;
+    let isAdminUser = false;
+    let activeTargetUid = null;
+    let adminAllUsersList = [];
     let authMode = 'login';
     let appSettings = {
       kopBaris1: 'PEMERINTAH KABUPATEN / KOTA',
@@ -1608,8 +1704,10 @@
       namaKelas: 'Kelas I',
       tahunAjaran: '2026 / 2027',
       kotaTandaTangan: 'Jember',
+      jabatanKS: 'Kepala Sekolah',
       namaKS: '',
       nipKS: '',
+      jabatanGuru: 'Guru Kelas',
       namaGuru: '',
       nipGuru: ''
     };
@@ -1620,13 +1718,8 @@
     let journalsList = [];
     let materialsList = [];
 
-    const MONTHS_ID = [
-      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-    ];
-
-    // Initialize Icons
-    lucide.createIcons();
+    const ADMIN_EMAILS = ['muhammad0413@admin.sd.belajar.id'];
+    const getTargetUid = () => activeTargetUid || (currentUser ? currentUser.uid : null);
 
     // Toast Helper
     window.showToast = (message, type = 'success') => {
@@ -1728,11 +1821,20 @@
     onAuthStateChanged(auth, async (user) => {
       currentUser = user;
       if (user) {
+        activeTargetUid = user.uid;
+        isAdminUser = ADMIN_EMAILS.includes((user.email || '').toLowerCase()) ||
+          (user.email || '').toLowerCase().includes('admin');
+        document.getElementById('nav-admin-panel').classList.toggle('hidden', !isAdminUser);
         document.getElementById('auth-section').classList.add('hidden');
         document.getElementById('app-section').classList.remove('hidden');
-        document.getElementById('user-email-display').textContent = user.email;
+        document.getElementById('user-email-display').textContent = isAdminUser
+          ? `${user.email} (ADMIN)`
+          : user.email;
         await initUserData();
+        if (isAdminUser) await loadAllAdminUsers();
       } else {
+        activeTargetUid = null;
+        isAdminUser = false;
         document.getElementById('app-section').classList.add('hidden');
         document.getElementById('auth-section').classList.remove('hidden');
       }
@@ -1764,7 +1866,28 @@
       nilai: ['Daftar Nilai Semester', 'Penilaian Formatif (TP/LM) & Sumatif Kurikulum Merdeka + Cetak F4'],
       jurnal: ['Jurnal Harian Mengajar', 'Catatan harian pelaksanaan pembelajaran dan refleksi kelas'],
       perangkat: ['Perangkat Ajar & Barcode', 'Arsip tautan perangkat ajar dengan generator barcode besar siap cetak'],
-      pengaturan: ['Pengaturan Sekolah & Backup', 'Atur Kop Surat, Logo Kiri-Kanan, Pejabat, serta Backup/Restore data']
+      pengaturan: ['Pengaturan Sekolah & Backup', 'Atur Kop Surat, Logo Kiri-Kanan, Pejabat, serta Backup/Restore data'],
+      admin: ['Panel Administrator', 'Akses penuh ke seluruh data kelas dan akun guru terdaftar']
+    };
+
+    window.navigateTo = (menuKey) => {
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.menu === menuKey);
+      });
+      document.querySelectorAll('.module-view').forEach(sec => sec.classList.add('hidden'));
+      document.getElementById(`view-${menuKey}`).classList.remove('hidden');
+
+      document.getElementById('topbar-title').textContent = MENU_META[menuKey][0];
+      document.getElementById('topbar-subtitle').textContent = MENU_META[menuKey][1];
+      toggleSidebar(false);
+
+      if (menuKey === 'dashboard') updateDashboardStats();
+      if (menuKey === 'absen') {
+        renderAbsenHarianTable();
+        renderAbsenBulananTable();
+      }
+      if (menuKey === 'nilai') renderGradesTable();
+      if (menuKey === 'admin' && isAdminUser) loadAllAdminUsers();
     };
 
     window.navigateTo = (menuKey) => {
@@ -1796,10 +1919,66 @@
     // =====================================================================
     async function loadSettings() {
       try {
-        const snap = await getDoc(doc(db, 'users', currentUser.uid, 'settings', 'general'));
+        const uid = getTargetUid();
+        const snap = await getDoc(doc(db, 'users', uid, 'settings', 'general'));
         if (snap.exists()) {
           appSettings = { ...appSettings, ...snap.data() };
         }
+        applySettingsToUI();
+      } catch (err) {
+        console.error('Gagal memuat pengaturan:', err);
+      }
+    }
+
+    function applySettingsToUI() {
+      document.getElementById('set-kop1').value = appSettings.kopBaris1 || '';
+      document.getElementById('set-kop2').value = appSettings.kopBaris2 || '';
+      document.getElementById('set-sekolah').value = appSettings.namaSekolah || '';
+      document.getElementById('set-kop3').value = appSettings.kopBaris3 || '';
+      document.getElementById('set-kelas').value = appSettings.namaKelas || '';
+      document.getElementById('set-ta').value = appSettings.tahunAjaran || '';
+      document.getElementById('set-kota').value = appSettings.kotaTandaTangan || '';
+      document.getElementById('set-ks-jabatan').value = appSettings.jabatanKS || 'Kepala Sekolah';
+      document.getElementById('set-ks-nama').value = appSettings.namaKS || '';
+      document.getElementById('set-ks-nip').value = appSettings.nipKS || '';
+      document.getElementById('set-guru-jabatan').value = appSettings.jabatanGuru || 'Guru Kelas';
+      document.getElementById('set-guru-nama').value = appSettings.namaGuru || '';
+      document.getElementById('set-guru-nip').value = appSettings.nipGuru || '';
+
+      // Logo Previews
+      const imgKiri = document.getElementById('preview-logo-kiri');
+      if (appSettings.logoKiriBase64) {
+        imgKiri.src = appSettings.logoKiriBase64;
+        imgKiri.classList.remove('hidden');
+      } else {
+        imgKiri.classList.add('hidden');
+      }
+
+      const imgKanan = document.getElementById('preview-logo-kanan');
+      if (appSettings.logoKananBase64) {
+        imgKanan.src = appSettings.logoKananBase64;
+        imgKanan.classList.remove('hidden');
+      } else {
+        imgKanan.classList.add('hidden');
+      }
+
+      // Update Sidebar & Dashboard Info
+      document.getElementById('sidebar-school-name').textContent = appSettings.namaSekolah || 'E-Admin Kelas';
+      document.getElementById('sidebar-class-name').textContent = `${appSettings.namaKelas || 'Kelas'} • TA ${appSettings.tahunAjaran || ''}`;
+      document.getElementById('badge-ta').textContent = `${appSettings.namaKelas || ''} | TA ${appSettings.tahunAjaran || ''}`;
+
+      document.getElementById('dash-sekolah').textContent = appSettings.namaSekolah || '-';
+      document.getElementById('dash-kelas-ta').textContent = `${appSettings.namaKelas || '-'} (${appSettings.tahunAjaran || '-'})`;
+      document.getElementById('dash-ks').textContent = appSettings.namaKS
+        ? `${appSettings.jabatanKS || 'Kepala Sekolah'}: ${appSettings.namaKS} (NIP. ${appSettings.nipKS || '-'})`
+        : '-';
+      document.getElementById('dash-guru').textContent = appSettings.namaGuru
+        ? `${appSettings.jabatanGuru || 'Guru Kelas'}: ${appSettings.namaGuru} (NIP. ${appSettings.nipGuru || '-'})`
+        : '-';
+
+      const namaTampil = appSettings.namaGuru || (currentUser && currentUser.displayName) || (currentUser && currentUser.email ? currentUser.email.split('@')[0] : 'Guru');
+      document.getElementById('hero-welcome-title').textContent = `Selamat Datang, ${namaTampil}`;
+    }
         applySettingsToUI();
       } catch (err) {
         console.error('Gagal memuat pengaturan:', err);
@@ -1895,14 +2074,16 @@
         namaKelas: document.getElementById('set-kelas').value.trim(),
         tahunAjaran: document.getElementById('set-ta').value.trim(),
         kotaTandaTangan: document.getElementById('set-kota').value.trim(),
+        jabatanKS: document.getElementById('set-ks-jabatan').value.trim() || 'Kepala Sekolah',
         namaKS: document.getElementById('set-ks-nama').value.trim(),
         nipKS: document.getElementById('set-ks-nip').value.trim(),
+        jabatanGuru: document.getElementById('set-guru-jabatan').value.trim() || 'Guru Kelas',
         namaGuru: document.getElementById('set-guru-nama').value.trim(),
         nipGuru: document.getElementById('set-guru-nip').value.trim(),
         updatedAt: new Date().toISOString()
       };
       try {
-        await setDoc(doc(db, 'users', currentUser.uid, 'settings', 'general'), appSettings);
+        await setDoc(doc(db, 'users', getTargetUid(), 'settings', 'general'), appSettings);
         applySettingsToUI();
         showToast('Pengaturan sekolah berhasil disimpan!');
       } catch (err) {
@@ -1911,11 +2092,81 @@
       }
     };
 
+    // =====================================================================
+    // MODULE 8: ADMIN FULL ACCESS FUNCTIONS
+    // =====================================================================
+    window.loadAllAdminUsers = async () => {
+      if (!isAdminUser) return;
+      const tbody = document.getElementById('admin-users-tbody');
+      tbody.innerHTML = `<tr><td colspan="9" class="empty-state">Memuat data seluruh akun terdaftar...</td></tr>`;
+      try {
+        const usersSnap = await getDocs(collection(db, 'users'));
+        adminAllUsersList = [];
+
+        // Pastikan akun saat ini juga terdeteksi meski dokumen root users/{uid} belum dibuat
+        const uidSet = new Set([currentUser.uid]);
+        usersSnap.forEach(d => uidSet.add(d.id));
+
+        for (const uid of uidSet) {
+          const [setSnap, stuSnap, jurSnap, matSnap] = await Promise.all([
+            getDoc(doc(db, 'users', uid, 'settings', 'general')),
+            getDocs(collection(db, 'users', uid, 'students')),
+            getDocs(collection(db, 'users', uid, 'journals')),
+            getDocs(collection(db, 'users', uid, 'teaching_materials'))
+          ]);
+          const sData = setSnap.exists() ? setSnap.data() : {};
+          adminAllUsersList.push({
+            uid,
+            settings: sData,
+            studentCount: stuSnap.size,
+            journalCount: jurSnap.size,
+            materialCount: matSnap.size
+          });
+        }
+
+        if (adminAllUsersList.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="9" class="empty-state">Belum ada data akun guru ditemukan.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = adminAllUsersList.map((item, idx) => {
+          const isCurrentTarget = item.uid === getTargetUid();
+          return `
+            <tr style="${isCurrentTarget ? 'background:#eff6ff;' : ''}">
+              <td>${idx + 1}</td>
+              <td class="font-semibold">${escapeHtml(item.settings.namaSekolah || 'Belum diisi')}</td>
+              <td>${escapeHtml(item.settings.namaKelas || '-')} • ${escapeHtml(item.settings.tahunAjaran || '-')}</td>
+              <td>${escapeHtml(item.settings.namaGuru || item.uid.slice(0, 10) + '...')}</td>
+              <td>${escapeHtml(item.settings.namaKS || '-')}</td>
+              <td style="text-align:center; font-weight:700;">${item.studentCount}</td>
+              <td style="text-align:center; font-weight:700;">${item.journalCount}</td>
+              <td style="text-align:center; font-weight:700;">${item.materialCount}</td>
+              <td>
+                <button class="btn ${isCurrentTarget ? 'btn-success' : 'btn-primary'} btn-sm" onclick="switchAdminTargetUser('${item.uid}')">
+                  ${isCurrentTarget ? 'Sedang Dibuka' : 'Buka & Kelola Data'}
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error(err);
+        tbody.innerHTML = `<tr><td colspan="9" class="empty-state">Pastikan Firestore Rules mengizinkan akses Admin untuk membaca koleksi users.</td></tr>`;
+      }
+    };
+
+    window.switchAdminTargetUser = async (uid) => {
+      activeTargetUid = uid;
+      await initUserData();
+      navigateTo('dashboard');
+      showToast('Berhasil beralih ke data kelas yang dipilih');
+    };
+
     // Backup & Restore All Data
     window.backupAllData = async () => {
       try {
         showToast('Menyiapkan file backup...');
-        const uid = currentUser.uid;
+        const uid = getTargetUid();
         const attSnap = await getDocs(collection(db, 'users', uid, 'attendance'));
         const gradesSnap = await getDocs(collection(db, 'users', uid, 'grades'));
 
@@ -1964,7 +2215,7 @@
           if (!data || data.app !== 'E-Admin Kelas') {
             throw new Error('Format file backup tidak valid.');
           }
-          const uid = currentUser.uid;
+          const uid = getTargetUid();
 
           if (data.settings) {
             await setDoc(doc(db, 'users', uid, 'settings', 'general'), data.settings);
@@ -2014,7 +2265,7 @@
     // MODULE 2: DATA SISWA + EXCEL TEMPLATE / IMPORT / EXPORT
     // =====================================================================
     async function loadStudents() {
-      const snap = await getDocs(collection(db, 'users', currentUser.uid, 'students'));
+      const snap = await getDocs(collection(db, 'users', getTargetUid(), 'students'));
       studentsList = [];
       snap.forEach(d => studentsList.push({ id: d.id, ...d.data() }));
       studentsList.sort((a, b) => (Number(a.noUrut) || 999) - (Number(b.noUrut) || 999));
@@ -2102,10 +2353,10 @@
 
       try {
         if (id) {
-          await updateDoc(doc(db, 'users', currentUser.uid, 'students', id), payload);
+          await updateDoc(doc(db, 'users', getTargetUid(), 'students', id), payload);
           showToast('Data siswa diperbarui');
         } else {
-          await addDoc(collection(db, 'users', currentUser.uid, 'students'), payload);
+          await addDoc(collection(db, 'users', getTargetUid(), 'students'), payload);
           showToast('Siswa baru ditambahkan');
         }
         closeStudentModal();
@@ -2119,7 +2370,7 @@
     window.deleteStudent = async (id) => {
       if (!confirm('Hapus data siswa ini?')) return;
       try {
-        await deleteDoc(doc(db, 'users', currentUser.uid, 'students', id));
+        await deleteDoc(doc(db, 'users', getTargetUid(), 'students', id));
         await loadStudents();
         updateDashboardStats();
         showToast('Data siswa dihapus');
@@ -2164,7 +2415,7 @@
           rows.forEach((r, idx) => {
             const nama = String(r.NAMA_SISWA || r.Nama || r.NAMA || '').trim();
             if (!nama || nama === 'CONTOH NAMA SISWA') return;
-            const ref = doc(collection(db, 'users', currentUser.uid, 'students'));
+            const ref = doc(collection(db, 'users', getTargetUid(), 'students'));
             batch.set(ref, {
               noUrut: Number(r.NO_URUT || r.No || studentsList.length + idx + 1),
               noInduk: String(r.NO_INDUK || r.NIS || '').trim(),
@@ -2216,7 +2467,7 @@
     async function loadAttendance(monthKey) {
       currentMonthKey = monthKey;
       try {
-        const snap = await getDoc(doc(db, 'users', currentUser.uid, 'attendance', monthKey));
+        const snap = await getDoc(doc(db, 'users', getTargetUid(), 'attendance', monthKey));
         if (snap.exists()) {
           attendanceData = snap.data();
           if (!attendanceData.records) attendanceData.records = {};
@@ -2399,7 +2650,7 @@
 
     window.saveAttendanceToFirestore = async () => {
       try {
-        await setDoc(doc(db, 'users', currentUser.uid, 'attendance', currentMonthKey), {
+        await setDoc(doc(db, 'users', getTargetUid(), 'attendance', currentMonthKey), {
           ...attendanceData,
           updatedAt: new Date().toISOString()
         });
@@ -2421,7 +2672,7 @@
 
     window.loadGradesForSubject = async () => {
       try {
-        const snap = await getDoc(doc(db, 'users', currentUser.uid, 'grades', getGradeDocId()));
+        const snap = await getDoc(doc(db, 'users', getTargetUid(), 'grades', getGradeDocId()));
         currentGradesScores = snap.exists() ? (snap.data().scores || {}) : {};
       } catch (err) {
         console.error(err);
@@ -2497,7 +2748,7 @@
 
     window.saveGradesToFirestore = async () => {
       try {
-        await setDoc(doc(db, 'users', currentUser.uid, 'grades', getGradeDocId()), {
+        await setDoc(doc(db, 'users', getTargetUid(), 'grades', getGradeDocId()), {
           semester: document.getElementById('grade-semester').value,
           mataPelajaran: document.getElementById('grade-subject').value,
           scores: currentGradesScores,
@@ -2599,7 +2850,7 @@
     // MODULE 5: JURNAL HARIAN (MANUAL)
     // =====================================================================
     async function loadJournals() {
-      const snap = await getDocs(collection(db, 'users', currentUser.uid, 'journals'));
+      const snap = await getDocs(collection(db, 'users', getTargetUid(), 'journals'));
       journalsList = [];
       snap.forEach(d => journalsList.push({ id: d.id, ...d.data() }));
       journalsList.sort((a, b) => (b.tanggal || '').localeCompare(a.tanggal || ''));
@@ -2655,10 +2906,10 @@
 
       try {
         if (id) {
-          await updateDoc(doc(db, 'users', currentUser.uid, 'journals', id), payload);
+          await updateDoc(doc(db, 'users', getTargetUid(), 'journals', id), payload);
           showToast('Jurnal harian diperbarui');
         } else {
-          await addDoc(collection(db, 'users', currentUser.uid, 'journals'), payload);
+          await addDoc(collection(db, 'users', getTargetUid(), 'journals'), payload);
           showToast('Jurnal harian disimpan');
         }
         resetJournalForm();
@@ -2694,7 +2945,7 @@
     window.deleteJournal = async (id) => {
       if (!confirm('Hapus catatan jurnal ini?')) return;
       try {
-        await deleteDoc(doc(db, 'users', currentUser.uid, 'journals', id));
+        await deleteDoc(doc(db, 'users', getTargetUid(), 'journals', id));
         await loadJournals();
         updateDashboardStats();
         showToast('Jurnal dihapus');
@@ -2707,7 +2958,7 @@
     // MODULE 6: PERANGKAT AJAR + BARCODE BESAR OTOMATIS + CETAK
     // =====================================================================
     async function loadTeachingMaterials() {
-      const snap = await getDocs(collection(db, 'users', currentUser.uid, 'teaching_materials'));
+      const snap = await getDocs(collection(db, 'users', getTargetUid(), 'teaching_materials'));
       materialsList = [];
       snap.forEach(d => materialsList.push({ id: d.id, ...d.data() }));
       renderTeachingMaterials();
@@ -2727,14 +2978,14 @@
           </span>
           <h4 class="font-bold mt-2" style="font-size: 1rem;">${escapeHtml(m.judul)}</h4>
           <div id="qr-target-${m.id}" class="qr-box"></div>
-          <p class="text-xs text-muted" style="word-break: break-all; max-width: 100%; margin-bottom: 14px;">
-            ${escapeHtml(m.tautan)}
-          </p>
-          <div class="flex gap-2" style="width: 100%;">
-            <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="printMaterialBarcode('${m.id}')">
-              <i data-lucide="printer" width="15"></i> Cetak Barcode
+          <div class="flex gap-2 mt-2" style="width: 100%; flex-wrap: wrap;">
+            <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="printMaterialBarcode('${m.id}', 'portrait')">
+              <i data-lucide="printer" width="15"></i> Cetak Portrait F4
             </button>
-            <button class="btn btn-danger btn-sm" onclick="deleteTeachingMaterial('${m.id}')">
+            <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="printMaterialBarcode('${m.id}', 'landscape')">
+              <i data-lucide="printer" width="15"></i> Cetak Landscape F4
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="deleteTeachingMaterial('${m.id}')" title="Hapus">
               <i data-lucide="trash-2" width="15"></i>
             </button>
           </div>
@@ -2769,7 +3020,7 @@
         createdAt: new Date().toISOString()
       };
       try {
-        await addDoc(collection(db, 'users', currentUser.uid, 'teaching_materials'), payload);
+        await addDoc(collection(db, 'users', getTargetUid(), 'teaching_materials'), payload);
         document.getElementById('material-form').reset();
         await loadTeachingMaterials();
         updateDashboardStats();
@@ -2782,7 +3033,7 @@
     window.deleteTeachingMaterial = async (id) => {
       if (!confirm('Hapus perangkat ajar ini?')) return;
       try {
-        await deleteDoc(doc(db, 'users', currentUser.uid, 'teaching_materials', id));
+        await deleteDoc(doc(db, 'users', getTargetUid(), 'teaching_materials', id));
         await loadTeachingMaterials();
         updateDashboardStats();
         showToast('Perangkat ajar dihapus');
@@ -2820,33 +3071,31 @@
         : `<div style="width:68px;"></div>`;
 
       return `
-        <div class="print-kop">
-          ${logoKiri}
-          <div class="print-kop-text">
-            ${appSettings.kopBaris1 ? `<h2>${escapeHtml(appSettings.kopBaris1)}</h2>` : ''}
-            ${appSettings.kopBaris2 ? `<h2>${escapeHtml(appSettings.kopBaris2)}</h2>` : ''}
-            <h1>${escapeHtml(appSettings.namaSekolah || '')}</h1>
-            ${appSettings.kopBaris3 ? `<p>${escapeHtml(appSettings.kopBaris3)}</p>` : ''}
-          </div>
-          ${logoKanan}
-        </div>
-      `;
+    function setPrintOrientation(orientation = 'portrait') {
+      const styleTag = document.getElementById('dynamic-print-orientation');
+      if (orientation === 'landscape') {
+        styleTag.textContent = `@media print { @page { size: 330mm 215mm; margin: 10mm 12mm; } }`;
+      } else {
+        styleTag.textContent = `@media print { @page { size: 215mm 330mm; margin: 10mm 12mm; } }`;
+      }
     }
 
-    function buildSignaturesHTML(jabatanKanan = 'Guru Kelas') {
+    function buildSignaturesHTML(jabatanKananCustom = '') {
       const kota = appSettings.kotaTandaTangan || '..................';
+      const labelKS = appSettings.jabatanKS || 'Kepala Sekolah';
+      const labelGuru = jabatanKananCustom || appSettings.jabatanGuru || 'Guru Kelas';
       return `
         <div class="print-signatures">
           <div class="print-sig-box">
             <div>Mengetahui,</div>
-            <div>Kepala Sekolah ${escapeHtml(appSettings.namaSekolah || '')}</div>
+            <div>${escapeHtml(labelKS)} ${escapeHtml(appSettings.namaSekolah || '')}</div>
             <div class="print-sig-space"></div>
             <div style="font-weight:700; text-decoration:underline;">${escapeHtml(appSettings.namaKS || '........................................')}</div>
             <div>NIP. ${escapeHtml(appSettings.nipKS || '........................................')}</div>
           </div>
           <div class="print-sig-box">
             <div>${escapeHtml(kota)}, ............................</div>
-            <div>${escapeHtml(jabatanKanan)} ${escapeHtml(appSettings.namaKelas || '')}</div>
+            <div>${escapeHtml(labelGuru)} ${escapeHtml(appSettings.namaKelas || '')}</div>
             <div class="print-sig-space"></div>
             <div style="font-weight:700; text-decoration:underline;">${escapeHtml(appSettings.namaGuru || '........................................')}</div>
             <div>NIP. ${escapeHtml(appSettings.nipGuru || '........................................')}</div>
@@ -2857,6 +3106,7 @@
 
     // 1. Cetak Absen F4 (Menyerupai Gambar 1)
     window.printAbsenF4 = () => {
+      setPrintOrientation('portrait');
       const [yr, mo] = currentMonthKey.split('-');
       const bulanNama = MONTHS_ID[parseInt(mo, 10) - 1];
       let dayTh = '';
@@ -2919,13 +3169,14 @@
         <div style="text-align:center; font-size:10pt; margin-top:12px;">
           Presentase Absen Bulan ini &nbsp;&nbsp; = &nbsp;&nbsp; <strong>${pct}</strong>
         </div>
-        ${buildSignaturesHTML('Guru Kelas')}
+        ${buildSignaturesHTML()}
       `;
       window.print();
     };
 
     // 2. Cetak Daftar Nilai F4 (Menyerupai Gambar 2)
     window.printGradesF4 = () => {
+      setPrintOrientation('landscape');
       const sem = document.getElementById('grade-semester').value;
       const mapel = document.getElementById('grade-subject').value;
 
@@ -3001,13 +3252,14 @@
         <div style="font-size:8.5pt; margin-top:8px;">
           <strong>Keterangan :</strong> TP = Tujuan Pembelajaran &nbsp;|&nbsp; LM = Lingkup Materi &nbsp;|&nbsp; SAS = Sumatif Akhir Semester
         </div>
-        ${buildSignaturesHTML('Wali Kelas')}
+        ${buildSignaturesHTML()}
       `;
       window.print();
     };
 
     // 3. Cetak Jurnal Harian F4
     window.printJournalsF4 = () => {
+      setPrintOrientation('portrait');
       const filterMonth = document.getElementById('journal-filter-month').value;
       const filtered = filterMonth
         ? journalsList.filter(j => (j.tanggal || '').startsWith(filterMonth))
@@ -3045,45 +3297,45 @@
           </thead>
           <tbody>${rowsHtml}</tbody>
         </table>
-        ${buildSignaturesHTML('Guru Kelas')}
+        ${buildSignaturesHTML()}
       `;
       window.print();
     };
 
-    // 4. Cetak Barcode Besar Perangkat Ajar F4
-    window.printMaterialBarcode = (id) => {
+    // 4. Cetak Barcode Besar Perangkat Ajar F4 (Portrait & Landscape)
+    window.printMaterialBarcode = (id, orientation = 'portrait') => {
       const mat = materialsList.find(m => m.id === id);
       if (!mat) return;
+
+      setPrintOrientation(orientation);
+      const qrSize = orientation === 'landscape' ? 240 : 340;
 
       const printArea = document.getElementById('print-area');
       printArea.innerHTML = `
         ${buildKopHTML()}
-        <div class="print-doc-title" style="margin-top:20px; font-size:14pt;">
+        <div class="print-doc-title" style="margin-top:${orientation === 'landscape' ? '8px' : '18px'}; font-size:${orientation === 'landscape' ? '12.5pt' : '14pt'};">
           DOKUMEN PERANGKAT PEMBELAJARAN DIGITAL<br/>
           ${escapeHtml(appSettings.namaKelas || '')} • TAHUN AJARAN ${escapeHtml(appSettings.tahunAjaran || '')}
         </div>
-        <div class="print-barcode-sheet">
-          <div style="font-size:12pt; font-weight:700; text-transform:uppercase; margin-bottom:6px;">
+        <div class="print-barcode-sheet ${orientation}">
+          <div style="font-size:12pt; font-weight:700; text-transform:uppercase; margin-bottom:4px;">
             ${escapeHtml(mat.jenis)}
           </div>
-          <div style="font-size:16pt; font-weight:700; margin-bottom:14px;">
+          <div style="font-size:${orientation === 'landscape' ? '14pt' : '16pt'}; font-weight:700; margin-bottom:10px;">
             ${escapeHtml(mat.judul)}
           </div>
-          <div id="print-big-qr" style="display:flex; justify-content:center; margin:20px 0;"></div>
-          <div style="font-size:10pt; margin-top:10px;">
-            Pindai (Scan) QR Code / Barcode di atas menggunakan kamera ponsel untuk membuka dokumen asli:
-          </div>
-          <div style="font-size:9pt; word-break:break-all; margin-top:6px; font-weight:700;">
-            ${escapeHtml(mat.tautan)}
+          <div id="print-big-qr" style="display:flex; justify-content:center; margin:${orientation === 'landscape' ? '10px' : '18px'} 0;"></div>
+          <div style="font-size:10pt; margin-top:8px;">
+            Pindai (Scan) QR Code / Barcode di atas menggunakan kamera ponsel untuk membuka dokumen perangkat ajar.
           </div>
         </div>
-        ${buildSignaturesHTML('Guru Kelas')}
+        ${buildSignaturesHTML()}
       `;
 
       new QRCode(document.getElementById('print-big-qr'), {
         text: mat.tautan,
-        width: 300,
-        height: 300,
+        width: qrSize,
+        height: qrSize,
         colorDark: '#000000',
         colorLight: '#ffffff',
         correctLevel: QRCode.CorrectLevel.H
@@ -3105,29 +3357,3 @@
   </script>
 </body>
 </html>
-```
-
----
-
-### Panduan Langkah Selanjutnya (Upload ke GitHub & Tayangkan di Vercel)
-
-#### 1. Simpan Kode ke GitHub (`index.html`)
-1. Buka **[github.com](https://github.com)** dan login ke akun Anda.
-2. Klik tanda **`+`** di pojok kanan atas $\rightarrow$ pilih **New repository**.
-3. Isi **Repository name** (misalnya `administrasi-kelas`), lalu klik **Create repository**.
-4. Klik tulisan **creating a new file** (atau klik **Add file** $\rightarrow$ **Create new file**).
-5. Ketik nama file persis: **`index.html`**.
-6. Salin **seluruh kode** di atas dan tempelkan ke kotak editor GitHub, lalu klik **Commit changes...**.
-
-#### 2. Deploy ke Vercel
-1. Buka **[vercel.com](https://vercel.com)** dan login menggunakan akun GitHub Anda.
-2. Klik **Add New...** $\rightarrow$ **Project**.
-3. Pilih repository **`administrasi-kelas`** yang baru dibuat, klik **Import**, lalu klik **Deploy**.
-4. Setelah selesai, salin alamat domain website Anda (contoh: `administrasi-kelas.vercel.app`).
-
-#### 3. Daftarkan Domain Vercel ke Firebase (Wajib agar Login Berfungsi)
-1. Kembali ke tab **Firebase Console** proyek `administrasikelas-9982f` Anda.
-2. Masuk ke menu **Autentikasi** (*Authentication*) $\rightarrow$ tab **Setelan** (*Settings*) $\rightarrow$ pilih **Domain resmi** (*Authorized domains*).
-3. Klik **Tambahkan domain** (*Add domain*), masukkan alamat domain Vercel Anda (tanpa `https://`), lalu klik **Tambahkan**.
-
-Setelah ketiga langkah di atas selesai, silakan buka link website Vercel Anda, klik **Daftar Guru Baru**, dan mulai gunakan seluruh 7 menu administrasi kelas Anda! Jika ada kendala saat deployment atau pengujian, beri tahu saya.
