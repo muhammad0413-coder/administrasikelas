@@ -948,24 +948,33 @@
         text-align: left;
       }
       .print-sig-space {
-        height: 56px;
-      }
-      .print-barcode-sheet {
-        border: 1.5px solid #000;
-        padding: 14px 20px;
-        text-align: center;
-        margin-top: 8px;
-        border-radius: 6px;
-        page-break-inside: avoid;
-      }
-      .print-barcode-sheet img,
-      .print-barcode-sheet canvas {
-        width: 210px !important;
-        height: 210px !important;
-        margin: 10px auto;
-        display: block;
-      }
+      height: 56px;
     }
+    .print-barcode-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .print-barcode-sheet {
+      border: 1.5px solid #000;
+      padding: 12px 14px;
+      text-align: center;
+      border-radius: 6px;
+      page-break-inside: avoid;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .print-barcode-sheet img,
+    .print-barcode-sheet canvas {
+      width: 145px !important;
+      height: 145px !important;
+      margin: 8px auto 2px;
+      display: block;
+    }
+  }
 
     /* Responsive Breakpoints */
     @media (max-width: 1024px) {
@@ -1575,7 +1584,7 @@
             <div class="card-header">
               <div class="card-title"><i data-lucide="qr-code" width="20" style="color: var(--primary);"></i> Perangkat Ajar & Generator Barcode Otomatis</div>
               <button type="button" class="btn btn-success btn-sm" onclick="printAllMaterialsF4()">
-                <i data-lucide="printer" width="16"></i> Cetak Daftar Perangkat (Landscape F4)
+                <i data-lucide="printer" width="16"></i> Cetak Semua Perangkat (Landscape F4)
               </button>
             </div>
 
@@ -1615,24 +1624,7 @@
               </div>
             </form>
 
-            <!-- Tabel Daftar Perangkat Ajar Terurut -->
-            <div class="table-responsive mb-4">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th style="width: 50px; text-align: center;">No</th>
-                    <th>Nama Perangkat Ajar</th>
-                    <th>Materi</th>
-                    <th>Jenis Dokumen</th>
-                    <th>Link Google Drive</th>
-                    <th style="width: 210px;">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody id="materials-table-tbody"></tbody>
-              </table>
-            </div>
-
-            <!-- Kartu Barcode QR Siap Scan -->
+            <!-- Kartu Barcode QR Siap Scan (Jenis Dokumen, Nama Perangkat Ajar, Materi, Barcode) -->
             <div id="materials-container" class="barcode-grid"></div>
           </div>
         </section>
@@ -3482,48 +3474,24 @@
     }
 
     window.renderTeachingMaterials = () => {
-      const tbody = document.getElementById('materials-table-tbody');
       const container = document.getElementById('materials-container');
 
       if (materialsList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="empty-state">Belum ada perangkat ajar. Tambahkan melalui formulir di atas.</td></tr>`;
-        container.innerHTML = '';
+        container.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;">Belum ada perangkat ajar. Tambahkan melalui formulir di atas untuk membuat barcode otomatis.</div>`;
         return;
       }
 
-      tbody.innerHTML = materialsList.map((m, idx) => `
-        <tr>
-          <td style="text-align: center; font-weight: 700;">${idx + 1}</td>
-          <td class="font-semibold">${escapeHtml(m.judul)}</td>
-          <td>${escapeHtml(m.materi || '-')}</td>
-          <td><span class="text-xs font-semibold" style="background: var(--primary-soft); color: var(--primary); padding: 3px 8px; border-radius: 999px;">${escapeHtml(m.jenis)}</span></td>
-          <td style="max-width: 240px; word-break: break-all;">
-            <a href="${escapeHtml(m.tautan)}" target="_blank" rel="noopener" style="color: var(--primary); text-decoration: underline; font-size: 0.8rem;">
-              ${escapeHtml(m.tautan)}
-            </a>
-          </td>
-          <td>
-            <div class="flex gap-2">
-              <button class="btn btn-primary btn-sm" onclick="printMaterialBarcode('${m.id}')">
-                <i data-lucide="printer" width="14"></i> Cetak Barcode
-              </button>
-              <button class="btn btn-danger btn-sm" onclick="deleteTeachingMaterial('${m.id}')">Hapus</button>
-            </div>
-          </td>
-        </tr>
-      `).join('');
-
       container.innerHTML = materialsList.map((m, idx) => `
         <div class="barcode-card">
-          <span class="text-xs font-bold" style="background: var(--primary-soft); color: var(--primary); padding: 4px 10px; border-radius: 999px;">
+          <span class="text-xs font-bold" style="background: var(--primary-soft); color: var(--primary); padding: 4px 12px; border-radius: 999px;">
             #${idx + 1} • ${escapeHtml(m.jenis)}
           </span>
-          <h4 class="font-bold mt-2" style="font-size: 1rem;">${escapeHtml(m.judul)}</h4>
-          ${m.materi ? `<div class="text-xs text-muted mt-2">Materi: <strong>${escapeHtml(m.materi)}</strong></div>` : ''}
+          <h4 class="font-bold mt-2" style="font-size: 1.05rem;">${escapeHtml(m.judul)}</h4>
+          <div class="text-xs text-muted mt-2">Materi: <strong>${escapeHtml(m.materi || '-')}</strong></div>
           <div id="qr-target-${m.id}" class="qr-box"></div>
           <div class="flex gap-2 mt-2" style="width: 100%;">
-            <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="printMaterialBarcode('${m.id}')">
-              <i data-lucide="printer" width="15"></i> Cetak Landscape F4
+            <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="printAllMaterialsF4()">
+              <i data-lucide="printer" width="15"></i> Cetak Semua Landscape F4
             </button>
             <button class="btn btn-danger btn-sm" onclick="deleteTeachingMaterial('${m.id}')" title="Hapus">
               <i data-lucide="trash-2" width="15"></i>
@@ -3559,6 +3527,7 @@
         tautan: document.getElementById('mat-tautan').value.trim(),
         createdAt: new Date().toISOString()
       };
+
       try {
         await addDoc(collection(db, 'users', getTargetUid(), 'teaching_materials'), payload);
         document.getElementById('material-form').reset();
@@ -3881,45 +3850,37 @@
       window.print();
     };
 
-    // 5. Cetak Semua Daftar Perangkat Ajar Berurutan (Landscape F4)
-    // Kolom: No, Nama Perangkat Ajar, Materi, Jenis Dokumen, Link G Drive (beserta QR Code & Pengesahan KS dan Guru)
+    // 5. Cetak Semua Kotak Barcode Perangkat Ajar Menyeluruh (Landscape F4)
+    // Tampilan cetak hanya kotak-kotak berisi: Jenis Dokumen, Nama Perangkat Ajar, Materi, dan Barcode QR
     window.printAllMaterialsF4 = () => {
       if (materialsList.length === 0) {
         return showToast('Belum ada data perangkat ajar untuk dicetak', 'error');
       }
 
-      const rowsHtml = materialsList.map((m, idx) => `
-        <tr>
-          <td style="width: 34px; font-weight: 700;">${idx + 1}</td>
-          <td class="text-left" style="font-weight: 700;">${escapeHtml(m.judul)}</td>
-          <td class="text-left">${escapeHtml(m.materi || '-')}</td>
-          <td>${escapeHtml(m.jenis)}</td>
-          <td class="text-left" style="word-break: break-all; font-size: 8pt;">${escapeHtml(m.tautan)}</td>
-          <td style="width: 74px; padding: 4px;">
-            <div id="print-list-qr-${m.id}" style="display: inline-block;"></div>
-          </td>
-        </tr>
+      const cardsHtml = materialsList.map((m, idx) => `
+        <div class="print-barcode-sheet">
+          <div style="font-size: 8.5pt; font-weight: 700; text-transform: uppercase; border: 1px solid #000; padding: 2px 8px; border-radius: 999px; margin-bottom: 5px;">
+            ${idx + 1}. ${escapeHtml(m.jenis)}
+          </div>
+          <div style="font-size: 11pt; font-weight: 700; line-height: 1.25; margin-bottom: 3px;">
+            ${escapeHtml(m.judul)}
+          </div>
+          <div style="font-size: 9pt; margin-bottom: 4px;">
+            Materi: <strong>${escapeHtml(m.materi || '-')}</strong>
+          </div>
+          <div id="print-list-qr-${m.id}" style="display: flex; justify-content: center;"></div>
+        </div>
       `).join('');
 
       document.getElementById('print-area').innerHTML = `
         ${buildKopHTML()}
         <div class="print-doc-title">
-          DAFTAR INVENTARIS PERANGKAT PEMBELAJARAN DIGITAL<br/>
+          PERANGKAT PEMBELAJARAN DIGITAL (QR BARCODE)<br/>
           ${escapeHtml(appSettings.namaKelas || '')} • TAHUN AJARAN ${escapeHtml(appSettings.tahunAjaran || '')}
         </div>
-        <table class="print-table">
-          <thead>
-            <tr>
-              <th style="width: 34px;">NO</th>
-              <th>NAMA PERANGKAT AJAR</th>
-              <th>MATERI</th>
-              <th style="width: 155px;">JENIS DOKUMEN</th>
-              <th>LINK G DRIVE</th>
-              <th style="width: 74px;">BARCODE</th>
-            </tr>
-          </thead>
-          <tbody>${rowsHtml}</tbody>
-        </table>
+        <div class="print-barcode-grid">
+          ${cardsHtml}
+        </div>
         ${buildSignaturesHTML()}
       `;
 
@@ -3928,11 +3889,11 @@
         if (el) {
           new QRCode(el, {
             text: m.tautan,
-            width: 58,
-            height: 58,
+            width: 145,
+            height: 145,
             colorDark: '#000000',
             colorLight: '#ffffff',
-            correctLevel: QRCode.CorrectLevel.M
+            correctLevel: QRCode.CorrectLevel.H
           });
         }
       });
@@ -3940,44 +3901,9 @@
       setTimeout(() => window.print(), 280);
     };
 
-    // 6. Cetak Barcode Satuan Perangkat Ajar (Landscape F4)
-    window.printMaterialBarcode = (id) => {
-      const mat = materialsList.find(m => m.id === id);
-      if (!mat) return;
-
-      const printArea = document.getElementById('print-area');
-      printArea.innerHTML = `
-        ${buildKopHTML()}
-        <div class="print-doc-title">
-          DOKUMEN PERANGKAT PEMBELAJARAN DIGITAL<br/>
-          ${escapeHtml(appSettings.namaKelas || '')} • TAHUN AJARAN ${escapeHtml(appSettings.tahunAjaran || '')}
-        </div>
-        <div class="print-barcode-sheet">
-          <div style="font-size:11pt; font-weight:700; text-transform:uppercase; margin-bottom:2px;">
-            ${escapeHtml(mat.jenis)}
-          </div>
-          <div style="font-size:14pt; font-weight:700; margin-bottom:2px;">
-            ${escapeHtml(mat.judul)}
-          </div>
-          ${mat.materi ? `<div style="font-size:10.5pt; margin-bottom:6px;">Materi: <strong>${escapeHtml(mat.materi)}</strong></div>` : ''}
-          <div id="print-big-qr" style="display:flex; justify-content:center; margin:8px 0;"></div>
-          <div style="font-size:9pt; margin-top:4px; word-break:break-all;">
-            Link G Drive: ${escapeHtml(mat.tautan)}
-          </div>
-        </div>
-        ${buildSignaturesHTML()}
-      `;
-
-      new QRCode(document.getElementById('print-big-qr'), {
-        text: mat.tautan,
-        width: 210,
-        height: 210,
-        colorDark: '#000000',
-        colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-      });
-
-      setTimeout(() => window.print(), 250);
+    // 6. Alias Cetak Satuan diarahkan ke Cetak Menyeluruh agar konsisten
+    window.printMaterialBarcode = () => {
+      window.printAllMaterialsF4();
     };
 
     // Utility: Escape HTML to prevent XSS
