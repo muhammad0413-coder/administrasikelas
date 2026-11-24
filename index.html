@@ -16,7 +16,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
   <!-- =====================================================================
-       SECTION 1: STYLES & PRINT F4 CSS
+       SECTION 1: STYLES & PRINT LANDSCAPE F4 CSS
        ===================================================================== -->
   <style>
     :root {
@@ -59,6 +59,7 @@
     .hidden { display: none !important; }
     .flex { display: flex; }
     .items-center { align-items: center; }
+    .items-end { align-items: flex-end; }
     .justify-between { justify-content: space-between; }
     .gap-2 { gap: 8px; }
     .gap-3 { gap: 12px; }
@@ -87,6 +88,7 @@
       border: 1px solid transparent;
       transition: all 0.2s ease;
       white-space: nowrap;
+      min-height: 40px;
     }
     .btn:disabled { opacity: 0.6; cursor: not-allowed; }
     .btn-primary {
@@ -107,7 +109,7 @@
       color: var(--text-main);
     }
     .btn-outline:hover { background-color: #f8fafc; border-color: #cbd5e1; }
-    .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
+    .btn-sm { padding: 6px 12px; font-size: 0.8rem; min-height: 34px; }
 
     /* Forms */
     .form-group { margin-bottom: 14px; }
@@ -138,7 +140,7 @@
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 
-    /* Auth Screen (Design inspired by Reference Image 3) */
+    /* Auth Screen */
     .auth-wrapper {
       min-height: 100vh;
       display: flex;
@@ -163,7 +165,7 @@
     .auth-card {
       width: 100%;
       max-width: 440px;
-      background: rgba(255, 255, 255, 0.96);
+      background: rgba(255, 255, 255, 0.97);
       backdrop-filter: blur(16px);
       border-radius: 24px;
       padding: 36px 32px;
@@ -226,9 +228,7 @@
       flex: 1;
       border-bottom: 1px solid var(--border-color);
     }
-    .auth-divider span {
-      padding: 0 12px;
-    }
+    .auth-divider span { padding: 0 12px; }
     .auth-footer-switch {
       text-align: center;
       margin-top: 18px;
@@ -248,9 +248,7 @@
       text-decoration: underline;
       padding: 0 4px;
     }
-    .auth-link-btn:hover {
-      color: var(--primary-dark);
-    }
+    .auth-link-btn:hover { color: var(--primary-dark); }
 
     /* App Shell Layout */
     .app-shell {
@@ -258,7 +256,7 @@
       min-height: 100vh;
     }
 
-    /* Sidebar (Royal Blue Modern Theme from Image 3) */
+    /* Sidebar */
     .sidebar {
       width: var(--sidebar-width);
       background: linear-gradient(180deg, #1e3a8a 0%, #172554 100%);
@@ -274,15 +272,15 @@
       box-shadow: 4px 0 24px rgba(15, 23, 42, 0.12);
     }
     .sidebar-header {
-      padding: 22px 20px;
+      padding: 20px;
       display: flex;
       align-items: center;
       gap: 12px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
     .sidebar-logo {
-      width: 42px;
-      height: 42px;
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
       background: rgba(255, 255, 255, 0.15);
       display: flex;
@@ -290,6 +288,13 @@
       justify-content: center;
       color: #93c5fd;
       flex-shrink: 0;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .sidebar-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
     .sidebar-nav {
       flex: 1;
@@ -339,11 +344,11 @@
       min-width: 0;
     }
     .topbar {
-      height: 70px;
-      background: rgba(255, 255, 255, 0.9);
+      min-height: 70px;
+      background: rgba(255, 255, 255, 0.92);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border-color);
-      padding: 0 24px;
+      padding: 10px 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -359,6 +364,26 @@
       cursor: pointer;
       padding: 6px;
     }
+    .topbar-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #2563eb, #1e3a8a);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 2px solid #bfdbfe;
+      flex-shrink: 0;
+    }
+    .topbar-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
     .content-area {
       padding: 24px;
       max-width: 1440px;
@@ -366,40 +391,240 @@
       margin: 0 auto;
     }
 
-    /* Hero Banner (Inspired by Image 3) */
-    .hero-banner {
-      background: linear-gradient(120deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%);
-      border-radius: 20px;
-      padding: 28px 32px;
-      color: #fff;
+    /* =====================================================================
+       MODERN HERO SECTION (PABNA MODEL SCHOOL STYLE + BOKEH + LARGE PORTRAIT)
+       ===================================================================== */
+    .hero-showcase {
       position: relative;
+      border-radius: 26px;
+      background: linear-gradient(115deg, #0f296e 0%, #1d4ed8 48%, #3b82f6 82%, #93c5fd 100%);
+      color: #fff;
       overflow: hidden;
-      margin-bottom: 24px;
-      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.22);
+      padding: 36px 38px 74px;
+      box-shadow: 0 20px 40px -15px rgba(29, 78, 216, 0.38);
+      isolation: isolate;
     }
-    .hero-banner::after {
-      content: "";
+    .hero-bg-photo {
       position: absolute;
-      right: -40px;
-      bottom: -60px;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.2;
+      mix-blend-mode: luminosity;
+      z-index: -2;
+      pointer-events: none;
+    }
+    .hero-bokeh {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .bokeh-1 {
       width: 240px;
       height: 240px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
+      top: -60px;
+      left: 34%;
+      background: radial-gradient(circle, rgba(147, 197, 253, 0.45) 0%, rgba(147, 197, 253, 0) 70%);
+      filter: blur(8px);
     }
-    .hero-badge {
+    .bokeh-2 {
+      width: 150px;
+      height: 150px;
+      bottom: 24px;
+      left: 16%;
+      background: radial-gradient(circle, rgba(96, 165, 250, 0.4) 0%, rgba(96, 165, 250, 0) 70%);
+      filter: blur(6px);
+    }
+    .bokeh-3 {
+      width: 300px;
+      height: 300px;
+      top: -40px;
+      right: 4%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 72%);
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 0.95fr;
+      gap: 28px;
+      align-items: center;
+    }
+    .hero-pill-badge {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       background: rgba(255, 255, 255, 0.16);
-      padding: 5px 12px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      padding: 6px 14px;
       border-radius: 999px;
       font-size: 0.78rem;
       font-weight: 600;
+      margin-bottom: 14px;
+    }
+    .hero-title-main {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.2;
       margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+    .hero-title-highlight {
+      color: #bae6fd;
+      display: block;
+    }
+    .hero-subtitle-desc {
+      font-size: 0.92rem;
+      color: #e0f2fe;
+      max-width: 560px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .btn-hero-white {
+      background: #ffffff;
+      color: #1e3a8a;
+      border-radius: 999px;
+      padding: 10px 20px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+    }
+    .btn-hero-white:hover {
+      background: #f8fafc;
+      transform: translateY(-2px);
+    }
+    .btn-hero-glass {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(8px);
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .btn-hero-glass:hover {
+      background: rgba(255, 255, 255, 0.25);
     }
 
-    /* Cards & Stat Cards */
+    /* Large Portrait Frame on Right */
+    .hero-portrait-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .hero-portrait-frame {
+      width: 235px;
+      height: 270px;
+      border-radius: 26px;
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.08));
+      border: 3px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 0 22px 45px rgba(15, 23, 42, 0.32);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .hero-portrait-frame:hover {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 26px 50px rgba(15, 23, 42, 0.4);
+    }
+    .hero-portrait-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+    .hero-portrait-initials {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #1e40af, #3b82f6);
+      color: #fff;
+      padding: 16px;
+      text-align: center;
+    }
+    .hero-portrait-initials span.initials-big {
+      font-size: 3.4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .hero-portrait-overlay-btn {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(8px);
+      color: #fff;
+      padding: 7px 12px;
+      border-radius: 12px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+    .hero-quote-tag {
+      position: absolute;
+      right: -6px;
+      bottom: 34px;
+      background: rgba(255, 255, 255, 0.95);
+      color: #1e3a8a;
+      padding: 7px 14px;
+      border-radius: 14px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.22);
+      transform: rotate(-3deg);
+    }
+
+    /* Overlapping Glass Stat Cards */
+    .hero-stats-overlap {
+      margin-top: -46px;
+      padding: 0 18px;
+      position: relative;
+      z-index: 10;
+      margin-bottom: 24px;
+    }
+    .glass-stat-card {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+      border-radius: 20px;
+      padding: 18px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 14px 30px -8px rgba(15, 23, 42, 0.12);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .glass-stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 34px -8px rgba(37, 99, 235, 0.18);
+    }
+
+    /* Cards & Stat Icons */
     .card {
       background: var(--bg-card);
       border-radius: var(--radius-lg);
@@ -426,21 +651,9 @@
       align-items: center;
       gap: 8px;
     }
-    .stat-card {
-      background: #fff;
-      border-radius: 18px;
-      padding: 20px;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-md);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      transition: transform 0.2s;
-    }
-    .stat-card:hover { transform: translateY(-2px); }
     .stat-icon {
-      width: 52px;
-      height: 52px;
+      width: 50px;
+      height: 50px;
       border-radius: 14px;
       display: flex;
       align-items: center;
@@ -541,7 +754,7 @@
     /* Perangkat Ajar Barcode Grid */
     .barcode-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(295px, 1fr));
       gap: 20px;
     }
     .barcode-card {
@@ -560,7 +773,7 @@
       background: #fff;
       border: 2px solid #e2e8f0;
       border-radius: 12px;
-      margin: 14px 0;
+      margin: 12px 0;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -619,22 +832,12 @@
       to { transform: translateX(0); opacity: 1; }
     }
 
-    /* Empty & Loading States */
+    /* Empty State */
     .empty-state {
       text-align: center;
       padding: 40px 20px;
       color: var(--text-muted);
     }
-    .spinner {
-      width: 32px;
-      height: 32px;
-      border: 3px solid #e2e8f0;
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 12px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
     /* Mobile Overlay */
     .sidebar-overlay {
@@ -646,7 +849,7 @@
     }
 
     /* =====================================================================
-       PRINT F4 STYLES (215mm x 330mm - Folio Indonesia)
+       PRINT LANDSCAPE F4 STYLES (330mm x 215mm - Folio Landscape)
        ===================================================================== */
     #print-area {
       display: none;
@@ -654,8 +857,8 @@
 
     @media print {
       @page {
-        size: 215mm 330mm;
-        margin: 10mm 12mm;
+        size: 330mm 215mm;
+        margin: 8mm 12mm;
       }
       body {
         background: #fff !important;
@@ -674,45 +877,47 @@
         font-family: 'Tinos', 'Times New Roman', serif;
         color: #000;
       }
+      /* Kop Surat Standar Resmi */
       .print-kop {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        border-bottom: 3px double #000;
-        padding-bottom: 8px;
-        margin-bottom: 12px;
+        border-bottom: 2.5px double #000;
+        padding-bottom: 6px;
+        margin-bottom: 10px;
       }
       .print-kop-logo {
-        width: 68px;
-        height: 68px;
+        width: 56px;
+        height: 56px;
         object-fit: contain;
       }
       .print-kop-text {
         flex: 1;
         text-align: center;
-        padding: 0 10px;
+        padding: 0 12px;
+        line-height: 1.25;
       }
       .print-kop-text h2 {
+        font-size: 11pt;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 1px;
+      }
+      .print-kop-text h1 {
         font-size: 13pt;
         font-weight: 700;
         text-transform: uppercase;
-        margin-bottom: 2px;
-      }
-      .print-kop-text h1 {
-        font-size: 15pt;
-        font-weight: 700;
-        text-transform: uppercase;
-        margin-bottom: 2px;
+        margin-bottom: 1px;
       }
       .print-kop-text p {
-        font-size: 9.5pt;
+        font-size: 9pt;
       }
       .print-doc-title {
         text-align: center;
         font-weight: 700;
-        font-size: 11.5pt;
+        font-size: 11pt;
         text-transform: uppercase;
-        margin: 8px 0 10px;
+        margin: 6px 0 8px;
         line-height: 1.3;
       }
       table.print-table {
@@ -723,50 +928,40 @@
       table.print-table th,
       table.print-table td {
         border: 1px solid #000;
-        padding: 3px 4px;
+        padding: 4px 5px;
         text-align: center;
+        vertical-align: middle;
       }
       table.print-table td.text-left {
         text-align: left;
-        padding-left: 6px;
+        padding-left: 7px;
       }
       .print-signatures {
         display: flex;
         justify-content: space-between;
-        margin-top: 22px;
+        margin-top: 18px;
         font-size: 10pt;
         page-break-inside: avoid;
       }
       .print-sig-box {
-        width: 42%;
+        width: 40%;
         text-align: left;
       }
       .print-sig-space {
-        height: 62px;
+        height: 56px;
       }
       .print-barcode-sheet {
-        border: 2px solid #000;
-        padding: 20px;
+        border: 1.5px solid #000;
+        padding: 14px 20px;
         text-align: center;
-        margin-top: 12px;
-        border-radius: 8px;
+        margin-top: 8px;
+        border-radius: 6px;
         page-break-inside: avoid;
       }
-      .print-barcode-sheet.portrait img,
-      .print-barcode-sheet.portrait canvas {
-        width: 340px !important;
-        height: 340px !important;
-        margin: 18px auto;
-        display: block;
-      }
-      .print-barcode-sheet.landscape {
-        padding: 14px 20px;
-        margin-top: 8px;
-      }
-      .print-barcode-sheet.landscape img,
-      .print-barcode-sheet.landscape canvas {
-        width: 240px !important;
-        height: 240px !important;
+      .print-barcode-sheet img,
+      .print-barcode-sheet canvas {
+        width: 210px !important;
+        height: 210px !important;
         margin: 10px auto;
         display: block;
       }
@@ -776,60 +971,27 @@
     @media (max-width: 1024px) {
       .grid-4 { grid-template-columns: repeat(2, 1fr); }
       .grid-3 { grid-template-columns: repeat(2, 1fr); }
+      .hero-grid { grid-template-columns: 1fr; text-align: center; }
+      .hero-subtitle-desc { margin-left: auto; margin-right: auto; }
+      .hero-actions { justify-content: center; }
     }
     @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
-      .sidebar.open {
-        transform: translateX(0);
-      }
-      .sidebar-overlay.open {
-        display: block;
-      }
-      .main-wrapper {
-        margin-left: 0;
-      }
-      .mobile-menu-btn {
-        display: inline-flex;
-      }
-      .grid-2, .grid-3, .grid-4 {
-        grid-template-columns: 1fr;
-      }
-      .content-area {
-        padding: 14px;
-      }
-      .topbar {
-        padding: 0 14px;
-        height: auto;
-        min-height: 64px;
-        padding-top: 10px;
-        padding-bottom: 10px;
-        flex-wrap: wrap;
-        gap: 8px;
-      }
-      .hero-banner {
-        padding: 20px 18px;
-      }
-      .hero-banner h1 {
-        font-size: 1.25rem !important;
-      }
-      .card {
-        padding: 14px;
-      }
-      .card-header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .stat-card {
-        padding: 14px;
-      }
-      #view-jurnal .grid-3 > .card {
-        grid-column: span 1 !important;
-      }
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.open { display: block; }
+      .main-wrapper { margin-left: 0; }
+      .mobile-menu-btn { display: inline-flex; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .content-area { padding: 14px; }
+      .hero-showcase { padding: 26px 20px 64px; border-radius: 20px; }
+      .hero-title-main { font-size: 1.45rem; }
+      .hero-portrait-frame { width: 195px; height: 225px; }
+      .hero-stats-overlap { margin-top: -38px; padding: 0 8px; }
+      .card { padding: 14px; }
+      .card-header { flex-direction: column; align-items: flex-start; }
+      #view-jurnal .grid-3 > .card { grid-column: span 1 !important; }
     }
   </style>
-  <style id="dynamic-print-orientation"></style>
 </head>
 <body>
 
@@ -880,7 +1042,6 @@
         </button>
       </form>
 
-      <!-- Link Daftar / Masuk di Bagian Bawah -->
       <div class="auth-footer-switch">
         <span id="auth-switch-prompt">Belum punya akun guru?</span>
         <button type="button" id="auth-switch-btn" class="auth-link-btn" onclick="toggleAuthMode()">
@@ -898,8 +1059,8 @@
 
     <aside id="sidebar" class="sidebar">
       <div class="sidebar-header">
-        <div class="sidebar-logo">
-          <i data-lucide="book-open-check" width="24" height="24"></i>
+        <div id="sidebar-avatar-box" class="sidebar-logo">
+          <i data-lucide="book-open-check" width="22" height="22"></i>
         </div>
         <div style="min-width: 0;">
           <div id="sidebar-school-name" class="font-bold" style="font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">E-Admin Kelas</div>
@@ -962,70 +1123,108 @@
             <p id="topbar-subtitle" class="text-xs text-muted">Ringkasan data kelas secara realtime</p>
           </div>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-3">
           <span id="badge-ta" class="text-xs font-semibold" style="background: var(--primary-soft); color: var(--primary); padding: 6px 12px; border-radius: 999px;">
             TA: -
           </span>
+          <div id="topbar-avatar" class="topbar-avatar" title="Foto Profil">GR</div>
         </div>
       </header>
 
       <main class="content-area">
         <!-- ===============================================================
-             MODULE 1: DASHBOARD
+             MODULE 1: DASHBOARD (MODERN HERO + LARGE TEACHER/ADMIN PORTRAIT)
              =============================================================== -->
         <section id="view-dashboard" class="module-view">
-          <div class="hero-banner">
-            <div class="hero-badge">
-              <i data-lucide="sparkles" width="14"></i>
-              <span>Selamat Datang di Sistem Administrasi Kelas</span>
-            </div>
-            <h1 id="hero-welcome-title" style="font-size: 1.55rem; font-weight: 800; margin-bottom: 6px;">
-              Administrasi Kelas Tertib & Terintegrasi
-            </h1>
-            <p id="hero-school-info" style="font-size: 0.9rem; color: #dbeafe; max-width: 680px;">
-              Silakan lengkapi Kop Surat, Data Kepala Sekolah, dan Identitas Guru Kelas di menu Pengaturan agar seluruh format cetak F4 terisi otomatis.
-            </p>
-            <div class="flex gap-2 mt-4" style="flex-wrap: wrap;">
-              <button class="btn btn-outline btn-sm" style="background: #fff; color: var(--primary-dark);" onclick="navigateTo('absen')">
-                <i data-lucide="check-square" width="15"></i> Isi Absen Hari Ini
-              </button>
-              <button class="btn btn-sm" style="background: rgba(255,255,255,0.18); color: #fff;" onclick="navigateTo('pengaturan')">
-                <i data-lucide="settings" width="15"></i> Atur Kop & Pejabat
-              </button>
+          <div class="hero-showcase">
+            <img id="hero-school-bg-img" class="hero-bg-photo hidden" src="" alt="Latar Sekolah" />
+            <div class="hero-bokeh bokeh-1"></div>
+            <div class="hero-bokeh bokeh-2"></div>
+            <div class="hero-bokeh bokeh-3"></div>
+
+            <div class="hero-grid">
+              <div>
+                <div class="hero-pill-badge">
+                  <i data-lucide="graduation-cap" width="15"></i>
+                  <span id="hero-school-badge">Sistem Administrasi Wali Kelas Digital</span>
+                </div>
+                <h1 class="hero-title-main">
+                  <span id="hero-greeting-line">Selamat Datang,</span>
+                  <span id="hero-welcome-title" class="hero-title-highlight">Bapak/Ibu Guru Kelas</span>
+                </h1>
+                <p id="hero-school-info" class="hero-subtitle-desc">
+                  Kelola seluruh administrasi peserta didik, rekap kehadiran bulanan, daftar nilai Kurikulum Merdeka, jurnal harian, serta perangkat ajar ber-barcode siap cetak Landscape F4.
+                </p>
+                <div class="hero-actions">
+                  <button type="button" class="btn btn-hero-white" onclick="navigateTo('absen')">
+                    <i data-lucide="check-square" width="16"></i>
+                    <span>Isi Absen Hari Ini</span>
+                  </button>
+                  <label class="btn btn-hero-glass" style="cursor: pointer;">
+                    <i data-lucide="image-plus" width="16"></i>
+                    <span>Latar Sekolah</span>
+                    <input type="file" accept="image/*" class="hidden" onchange="handleHeroBgUpload(event)" />
+                  </label>
+                  <button type="button" class="btn btn-hero-glass" onclick="navigateTo('pengaturan')">
+                    <i data-lucide="settings" width="16"></i>
+                    <span>Atur Kop & Pejabat</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Foto Profil Besar Guru / Admin di Sisi Kanan -->
+              <div class="hero-portrait-col">
+                <div class="hero-portrait-frame" onclick="document.getElementById('hero-profile-upload').click()" title="Klik untuk mengunggah atau mengganti foto profil">
+                  <img id="hero-profile-img" class="hidden" src="" alt="Foto Profil Guru/Admin" />
+                  <div id="hero-profile-placeholder" class="hero-portrait-initials">
+                    <span id="hero-initials-text" class="initials-big">GR</span>
+                    <span class="text-xs" style="opacity: 0.9;">Klik untuk Unggah Foto</span>
+                  </div>
+                  <div class="hero-portrait-overlay-btn">
+                    <i data-lucide="camera" width="14"></i>
+                    <span>Unggah / Ganti Foto Profil</span>
+                  </div>
+                </div>
+                <div class="hero-quote-tag" id="hero-role-tag">Wali Kelas • Profesional</div>
+                <input type="file" id="hero-profile-upload" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(event)" />
+              </div>
             </div>
           </div>
 
-          <div class="grid-4 mb-4">
-            <div class="stat-card">
-              <div class="stat-icon bg-blue-grad"><i data-lucide="users" width="24"></i></div>
-              <div>
-                <div class="text-xs text-muted font-semibold">Total Peserta Didik</div>
-                <div id="stat-total-siswa" style="font-size: 1.5rem; font-weight: 800;">0</div>
-                <div id="stat-gender-siswa" class="text-xs text-muted">L: 0 | P: 0</div>
+          <!-- 4 Kartu Statistik Glassmorphism Bertumpuk -->
+          <div class="hero-stats-overlap">
+            <div class="grid-4">
+              <div class="glass-stat-card" onclick="navigateTo('siswa')">
+                <div class="stat-icon bg-blue-grad"><i data-lucide="users" width="23"></i></div>
+                <div>
+                  <div class="text-xs text-muted font-semibold">Total Peserta Didik</div>
+                  <div id="stat-total-siswa" style="font-size: 1.45rem; font-weight: 800;">0</div>
+                  <div id="stat-gender-siswa" class="text-xs text-muted">L: 0 | P: 0</div>
+                </div>
               </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon bg-teal-grad"><i data-lucide="calendar-check-2" width="24"></i></div>
-              <div>
-                <div class="text-xs text-muted font-semibold">Kehadiran Bulan Ini</div>
-                <div id="stat-persen-absen" style="font-size: 1.5rem; font-weight: 800;">0%</div>
-                <div id="stat-bulan-aktif" class="text-xs text-muted">Bulan berjalan</div>
+              <div class="glass-stat-card" onclick="navigateTo('absen')">
+                <div class="stat-icon bg-teal-grad"><i data-lucide="calendar-check-2" width="23"></i></div>
+                <div>
+                  <div class="text-xs text-muted font-semibold">Kehadiran Bulan Ini</div>
+                  <div id="stat-persen-absen" style="font-size: 1.45rem; font-weight: 800;">0%</div>
+                  <div id="stat-bulan-aktif" class="text-xs text-muted">Bulan berjalan</div>
+                </div>
               </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon bg-orange-grad"><i data-lucide="notebook-text" width="24"></i></div>
-              <div>
-                <div class="text-xs text-muted font-semibold">Jurnal Mengajar</div>
-                <div id="stat-total-jurnal" style="font-size: 1.5rem; font-weight: 800;">0</div>
-                <div class="text-xs text-muted">Catatan kegiatan</div>
+              <div class="glass-stat-card" onclick="navigateTo('jurnal')">
+                <div class="stat-icon bg-orange-grad"><i data-lucide="notebook-text" width="23"></i></div>
+                <div>
+                  <div class="text-xs text-muted font-semibold">Jurnal Mengajar</div>
+                  <div id="stat-total-jurnal" style="font-size: 1.45rem; font-weight: 800;">0</div>
+                  <div class="text-xs text-muted">Catatan kegiatan</div>
+                </div>
               </div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon bg-purple-grad"><i data-lucide="qr-code" width="24"></i></div>
-              <div>
-                <div class="text-xs text-muted font-semibold">Perangkat Ajar</div>
-                <div id="stat-total-perangkat" style="font-size: 1.5rem; font-weight: 800;">0</div>
-                <div class="text-xs text-muted">Dokumen ber-barcode</div>
+              <div class="glass-stat-card" onclick="navigateTo('perangkat')">
+                <div class="stat-icon bg-purple-grad"><i data-lucide="qr-code" width="23"></i></div>
+                <div>
+                  <div class="text-xs text-muted font-semibold">Perangkat Ajar</div>
+                  <div id="stat-total-perangkat" style="font-size: 1.45rem; font-weight: 800;">0</div>
+                  <div class="text-xs text-muted">Dokumen ber-barcode</div>
+                </div>
               </div>
             </div>
           </div>
@@ -1046,7 +1245,7 @@
                   <i data-lucide="table" width="18" style="color: #f59e0b;"></i> Kelola Daftar Nilai TP/LM
                 </button>
                 <button class="btn btn-outline" style="justify-content: flex-start; padding: 14px;" onclick="navigateTo('perangkat')">
-                  <i data-lucide="qr-code" width="18" style="color: #8b5cf6;"></i> Buat Barcode Perangkat
+                  <i data-lucide="qr-code" width="18" style="color: #8b5cf6;"></i> Perangkat Ajar & Cetak F4
                 </button>
               </div>
             </div>
@@ -1068,7 +1267,7 @@
         </section>
 
         <!-- ===============================================================
-             MODULE 2: DATA SISWA + TEMPLATE / IMPOR / EKSPOR EXCEL
+             MODULE 2: DATA SISWA + TEMPLATE / IMPOR / EKSPOR EXCEL + CETAK F4
              =============================================================== -->
         <section id="view-siswa" class="module-view hidden">
           <div class="card">
@@ -1084,6 +1283,9 @@
                 </label>
                 <button class="btn btn-warning btn-sm" onclick="exportStudentsExcel()">
                   <i data-lucide="file-spreadsheet" width="15"></i> Ekspor Excel
+                </button>
+                <button class="btn btn-success btn-sm" onclick="printStudentsF4()">
+                  <i data-lucide="printer" width="15"></i> Cetak Landscape F4
                 </button>
                 <button class="btn btn-primary btn-sm" onclick="openStudentModal()">
                   <i data-lucide="plus" width="15"></i> Tambah Siswa
@@ -1107,7 +1309,7 @@
                     <th>L/P</th>
                     <th>Tempat, Tanggal Lahir</th>
                     <th>Nama Orang Tua</th>
-                    <th style="width: 120px;">Aksi</th>
+                    <th style="width: 130px;">Aksi</th>
                   </tr>
                 </thead>
                 <tbody id="students-tbody">
@@ -1119,7 +1321,7 @@
         </section>
 
         <!-- ===============================================================
-             MODULE 3: ABSEN HARIAN & REKAP BULANAN (EDITABLE + CETAK F4)
+             MODULE 3: ABSEN HARIAN & REKAP BULANAN (EDITABLE + CETAK LANDSCAPE F4)
              =============================================================== -->
         <section id="view-absen" class="module-view hidden">
           <div class="card">
@@ -1129,7 +1331,7 @@
                 <button id="btn-mode-harian" class="btn btn-primary btn-sm" onclick="switchAbsenMode('harian')">Mode Absen Harian</button>
                 <button id="btn-mode-bulanan" class="btn btn-outline btn-sm" onclick="switchAbsenMode('bulanan')">Rekap Bulanan (Edit 1-31)</button>
                 <button class="btn btn-success btn-sm" onclick="printAbsenF4()">
-                  <i data-lucide="printer" width="15"></i> Cetak F4
+                  <i data-lucide="printer" width="15"></i> Cetak Landscape F4
                 </button>
               </div>
             </div>
@@ -1141,7 +1343,7 @@
                   <label class="form-label" style="margin: 0;">Pilih Tanggal:</label>
                   <input type="date" id="absen-date-picker" class="form-control" style="width: auto;" onchange="onAbsenDateChange()" />
                 </div>
-                <div class="flex gap-2">
+                <div class="flex gap-2" style="flex-wrap: wrap;">
                   <button class="btn btn-outline btn-sm" onclick="markAllHadirToday()">
                     <i data-lucide="check-check" width="15"></i> Tandai Semua Hadir (H)
                   </button>
@@ -1166,7 +1368,7 @@
               </div>
             </div>
 
-            <!-- SUB-VIEW: REKAP ABSEN BULANAN (SESUAI GAMBAR 1) -->
+            <!-- SUB-VIEW: REKAP ABSEN BULANAN -->
             <div id="absen-bulanan-panel" class="hidden">
               <div class="flex items-center justify-between gap-3 mb-4" style="flex-wrap: wrap;">
                 <div class="flex items-center gap-2">
@@ -1196,7 +1398,7 @@
         </section>
 
         <!-- ===============================================================
-             MODULE 4: DAFTAR NILAI (KURIKULUM MERDEKA - SESUAI GAMBAR 2)
+             MODULE 4: DAFTAR NILAI (KURIKULUM MERDEKA + CETAK LANDSCAPE F4)
              =============================================================== -->
         <section id="view-nilai" class="module-view hidden">
           <div class="card">
@@ -1217,7 +1419,7 @@
                   <i data-lucide="save" width="15"></i> Simpan Nilai
                 </button>
                 <button class="btn btn-success btn-sm" onclick="printGradesF4()">
-                  <i data-lucide="printer" width="15"></i> Cetak F4
+                  <i data-lucide="printer" width="15"></i> Cetak Landscape F4
                 </button>
               </div>
             </div>
@@ -1276,7 +1478,6 @@
                     <th rowspan="2" style="text-align: center;">LM5</th>
                   </tr>
                   <tr>
-                    <!-- 5 x 4 TP Headers -->
                     <th>TP1</th><th>TP2</th><th>TP3</th><th>TP4</th>
                     <th>TP1</th><th>TP2</th><th>TP3</th><th>TP4</th>
                     <th>TP1</th><th>TP2</th><th>TP3</th><th>TP4</th>
@@ -1291,7 +1492,7 @@
         </section>
 
         <!-- ===============================================================
-             MODULE 5: JURNAL HARIAN (MANUAL)
+             MODULE 5: JURNAL HARIAN (MANUAL + CETAK LANDSCAPE F4)
              =============================================================== -->
         <section id="view-jurnal" class="module-view hidden">
           <div class="grid-3">
@@ -1339,10 +1540,10 @@
             <div class="card" style="grid-column: span 2;">
               <div class="card-header">
                 <div class="card-title"><i data-lucide="list-checks" width="18" style="color: var(--primary);"></i> Riwayat Jurnal Mengajar</div>
-                <div class="flex gap-2">
+                <div class="flex gap-2" style="flex-wrap: wrap;">
                   <input type="month" id="journal-filter-month" class="form-control" style="width: auto; padding: 6px 10px;" onchange="renderJournalsTable()" />
                   <button class="btn btn-success btn-sm" onclick="printJournalsF4()">
-                    <i data-lucide="printer" width="15"></i> Cetak F4
+                    <i data-lucide="printer" width="15"></i> Cetak Landscape F4
                   </button>
                 </div>
               </div>
@@ -1356,7 +1557,7 @@
                       <th style="width: 70px;">Jam</th>
                       <th>Mapel & Materi</th>
                       <th>Kegiatan & Refleksi</th>
-                      <th style="width: 95px;">Aksi</th>
+                      <th style="width: 110px;">Aksi</th>
                     </tr>
                   </thead>
                   <tbody id="journals-tbody"></tbody>
@@ -1367,47 +1568,77 @@
         </section>
 
         <!-- ===============================================================
-             MODULE 6: PERANGKAT AJAR + BARCODE BESAR OTOMATIS + CETAK
+             MODULE 6: PERANGKAT AJAR (NAMA, MATERI, JENIS, LINK G-DRIVE + CETAK F4)
              =============================================================== -->
         <section id="view-perangkat" class="module-view hidden">
           <div class="card">
             <div class="card-header">
               <div class="card-title"><i data-lucide="qr-code" width="20" style="color: var(--primary);"></i> Perangkat Ajar & Generator Barcode Otomatis</div>
+              <button type="button" class="btn btn-success btn-sm" onclick="printAllMaterialsF4()">
+                <i data-lucide="printer" width="16"></i> Cetak Daftar Perangkat (Landscape F4)
+              </button>
             </div>
 
-            <form id="material-form" onsubmit="saveTeachingMaterial(event)" class="grid-4 mb-4" style="background: #f8fafc; padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
-              <div>
-                <label class="form-label">Nama Perangkat Ajar</label>
-                <input type="text" id="mat-judul" class="form-control" placeholder="Contoh: Modul Ajar Matematika" required />
+            <form id="material-form" onsubmit="saveTeachingMaterial(event)" class="mb-4" style="background: #f8fafc; padding: 18px; border-radius: 14px; border: 1px solid var(--border-color);">
+              <div class="grid-2">
+                <div class="form-group">
+                  <label class="form-label">Nama Perangkat Ajar</label>
+                  <input type="text" id="mat-judul" class="form-control" placeholder="Contoh: Modul Ajar Matematika Fase A" required />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Materi Pokok / Bab</label>
+                  <input type="text" id="mat-materi" class="form-control" placeholder="Contoh: Bab 1 - Bilangan Cacah Sampai 20" required />
+                </div>
               </div>
-              <div>
-                <label class="form-label">Jenis Dokumen</label>
-                <select id="mat-jenis" class="form-control">
-                  <option value="Modul Ajar / RPP">Modul Ajar / RPP</option>
-                  <option value="Alur Tujuan Pembelajaran (ATP)">Alur Tujuan Pembelajaran (ATP)</option>
-                  <option value="Program Tahunan (Prota)">Program Tahunan (Prota)</option>
-                  <option value="Program Semester (Promes)">Program Semester (Promes)</option>
-                  <option value="KKTP & Asesmen">KKTP & Asesmen</option>
-                  <option value="Administrasi Lainnya">Administrasi Lainnya</option>
-                </select>
-              </div>
-              <div>
-                <label class="form-label">Tautan File (Google Drive / URL / Kode)</label>
-                <input type="text" id="mat-tautan" class="form-control" placeholder="https://drive.google.com/..." required />
-              </div>
-              <div class="flex items-end">
-                <button type="submit" class="btn btn-primary" style="width: 100%;">
-                  <i data-lucide="qr-code" width="16"></i> Simpan & Buat Barcode
-                </button>
+              <div class="grid-3">
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">Jenis Dokumen</label>
+                  <select id="mat-jenis" class="form-control">
+                    <option value="Modul Ajar / RPP">Modul Ajar / RPP</option>
+                    <option value="Alur Tujuan Pembelajaran (ATP)">Alur Tujuan Pembelajaran (ATP)</option>
+                    <option value="Program Tahunan (Prota)">Program Tahunan (Prota)</option>
+                    <option value="Program Semester (Promes)">Program Semester (Promes)</option>
+                    <option value="KKTP & Asesmen">KKTP & Asesmen</option>
+                    <option value="Bahan Ajar & LKPD">Bahan Ajar & LKPD</option>
+                    <option value="Administrasi Lainnya">Administrasi Lainnya</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                  <label class="form-label">Link Google Drive / Tautan File</label>
+                  <input type="text" id="mat-tautan" class="form-control" placeholder="https://drive.google.com/..." required />
+                </div>
+                <div class="flex items-end">
+                  <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i data-lucide="qr-code" width="16"></i> Simpan & Buat Barcode
+                  </button>
+                </div>
               </div>
             </form>
 
+            <!-- Tabel Daftar Perangkat Ajar Terurut -->
+            <div class="table-responsive mb-4">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px; text-align: center;">No</th>
+                    <th>Nama Perangkat Ajar</th>
+                    <th>Materi</th>
+                    <th>Jenis Dokumen</th>
+                    <th>Link Google Drive</th>
+                    <th style="width: 210px;">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="materials-table-tbody"></tbody>
+              </table>
+            </div>
+
+            <!-- Kartu Barcode QR Siap Scan -->
             <div id="materials-container" class="barcode-grid"></div>
           </div>
         </section>
 
         <!-- ===============================================================
-             MODULE 7: PENGATURAN (KOP, LOGO KIRI-KANAN, KS, GURU, BACKUP/RESTORE)
+             MODULE 7: PENGATURAN (FOTO PROFIL, KOP, LOGO, PEJABAT, BACKUP/RESTORE)
              =============================================================== -->
         <section id="view-pengaturan" class="module-view hidden">
           <form id="settings-form" onsubmit="saveSettingsToFirestore(event)">
@@ -1454,11 +1685,30 @@
                 </div>
               </div>
 
-              <!-- Pejabat (KS & Guru Kelas) & Identitas Kelas -->
+              <!-- Pejabat (KS & Guru Kelas) & Foto Profil -->
               <div class="card">
                 <div class="card-header">
-                  <div class="card-title"><i data-lucide="user-check" width="18" style="color: var(--primary);"></i> Kepala Sekolah, Guru Kelas & Identitas</div>
+                  <div class="card-title"><i data-lucide="user-check" width="18" style="color: var(--primary);"></i> Profil Guru, Kepala Sekolah & Identitas</div>
                 </div>
+
+                <!-- Unggah Foto Profil Guru / Admin -->
+                <div class="flex items-center gap-4 mb-4" style="background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color);">
+                  <div id="settings-avatar-preview" style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, #2563eb, #1e3a8a); color: #fff; font-weight: 800; font-size: 1.3rem; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+                    GR
+                  </div>
+                  <div style="flex: 1;">
+                    <div class="font-bold text-sm">Foto Profil Guru / Admin</div>
+                    <div class="text-xs text-muted mb-2">Tampil besar pada banner awal Dashboard</div>
+                    <div class="flex gap-2" style="flex-wrap: wrap;">
+                      <label class="btn btn-primary btn-sm" style="cursor: pointer;">
+                        <i data-lucide="camera" width="14"></i> Pilih Foto Profil
+                        <input type="file" accept="image/*" class="hidden" onchange="handleProfilePhotoUpload(event)" />
+                      </label>
+                      <button type="button" class="btn btn-outline btn-sm" onclick="clearProfilePhoto()">Hapus Foto</button>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="grid-2">
                   <div class="form-group">
                     <label class="form-label">Nama Kelas / Rombel</label>
@@ -1534,35 +1784,93 @@
         </section>
 
         <!-- ===============================================================
-             MODULE 8: PANEL ADMIN (AKSES SEMUA DATA AKUN GURU)
+             MODULE 8: PANEL ADMIN (AKSES SEMUA DATA AKUN GURU + PROFIL ADMIN)
              =============================================================== -->
         <section id="view-admin" class="module-view hidden">
+          <!-- Kartu Profil Admin & Pengaturan Sapaan Guru -->
+          <div class="card" style="background: linear-gradient(120deg, #1e3a8a 0%, #2563eb 100%); color: #fff;">
+            <div class="flex items-center justify-between gap-4" style="flex-wrap: wrap;">
+              <div class="flex items-center gap-4">
+                <div id="admin-avatar-box" onclick="document.getElementById('admin-photo-input').click()" style="width: 78px; height: 78px; border-radius: 20px; background: rgba(255,255,255,0.2); border: 2px solid rgba(255,255,255,0.5); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; overflow: hidden; cursor: pointer; flex-shrink: 0;">
+                  AD
+                </div>
+                <div>
+                  <div class="text-xs" style="color: #bfdbfe; font-weight: 600;">ADMINISTRATOR SISTEM</div>
+                  <h3 id="admin-name-heading" style="font-size: 1.25rem; font-weight: 800;">Panel Kontrol Utama</h3>
+                  <p class="text-xs" style="color: #dbeafe;">Pantau seluruh akun guru, peserta didik, jurnal, dan perangkat ajar yang masuk ke aplikasi.</p>
+                </div>
+              </div>
+              <div class="flex gap-2" style="flex-wrap: wrap;">
+                <label class="btn btn-hero-white btn-sm" style="cursor: pointer;">
+                  <i data-lucide="camera" width="15"></i> Unggah Foto Admin
+                  <input type="file" id="admin-photo-input" accept="image/*" class="hidden" onchange="handleAdminPhotoUpload(event)" />
+                </label>
+                <button type="button" class="btn btn-hero-glass btn-sm" onclick="switchAdminTargetUser(currentUser.uid)">
+                  <i data-lucide="home" width="15"></i> Kembali ke Akun Admin
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Statistik Global Seluruh Aplikasi -->
+          <div class="grid-4 mb-4">
+            <div class="glass-stat-card">
+              <div class="stat-icon bg-blue-grad"><i data-lucide="user-check" width="22"></i></div>
+              <div>
+                <div class="text-xs text-muted font-semibold">Total Akun Guru</div>
+                <div id="admin-stat-users" style="font-size: 1.4rem; font-weight: 800;">0</div>
+              </div>
+            </div>
+            <div class="glass-stat-card">
+              <div class="stat-icon bg-teal-grad"><i data-lucide="users" width="22"></i></div>
+              <div>
+                <div class="text-xs text-muted font-semibold">Total Seluruh Siswa</div>
+                <div id="admin-stat-students" style="font-size: 1.4rem; font-weight: 800;">0</div>
+              </div>
+            </div>
+            <div class="glass-stat-card">
+              <div class="stat-icon bg-orange-grad"><i data-lucide="notebook-pen" width="22"></i></div>
+              <div>
+                <div class="text-xs text-muted font-semibold">Total Jurnal Masuk</div>
+                <div id="admin-stat-journals" style="font-size: 1.4rem; font-weight: 800;">0</div>
+              </div>
+            </div>
+            <div class="glass-stat-card">
+              <div class="stat-icon bg-purple-grad"><i data-lucide="qr-code" width="22"></i></div>
+              <div>
+                <div class="text-xs text-muted font-semibold">Total Perangkat Ajar</div>
+                <div id="admin-stat-materials" style="font-size: 1.4rem; font-weight: 800;">0</div>
+              </div>
+            </div>
+          </div>
+
           <div class="card">
             <div class="card-header">
               <div class="card-title">
                 <i data-lucide="shield-check" width="20" style="color: #d97706;"></i>
-                <span>Panel Admin — Akses Seluruh Data Kelas & Guru</span>
+                <span>Daftar Semua Akun & Data Kelas Masuk</span>
               </div>
-              <button class="btn btn-primary btn-sm" onclick="loadAllAdminUsers()">
-                <i data-lucide="refresh-cw" width="15"></i> Muat Ulang Data Semua Akun
-              </button>
+              <div class="flex gap-2" style="flex-wrap: wrap;">
+                <input type="text" id="admin-search-input" class="form-control" style="width: 240px; padding: 6px 12px;" placeholder="Cari sekolah / guru / email..." oninput="renderAdminUsersTable()" />
+                <button class="btn btn-primary btn-sm" onclick="loadAllAdminUsers()">
+                  <i data-lucide="refresh-cw" width="15"></i> Muat Ulang Data
+                </button>
+              </div>
             </div>
-            <p class="text-sm text-muted mb-4">
-              Sebagai Admin, Anda dapat melihat seluruh akun guru/kelas yang terdaftar di sistem, meninjau data siswa, absensi, nilai, jurnal, perangkat ajar, serta mengunduh cadangan data setiap kelas.
-            </p>
+
             <div class="table-responsive">
               <table class="data-table">
                 <thead>
                   <tr>
-                    <th style="width: 50px;">No</th>
+                    <th style="width: 45px;">No</th>
                     <th>Nama Sekolah</th>
                     <th>Kelas / TA</th>
-                    <th>Nama Guru / Wali Kelas</th>
+                    <th>Nama Guru & Email</th>
                     <th>Kepala Sekolah</th>
-                    <th>Jml Siswa</th>
-                    <th>Jml Jurnal</th>
-                    <th>Perangkat</th>
-                    <th style="width: 190px;">Aksi Admin</th>
+                    <th style="text-align: center;">Siswa</th>
+                    <th style="text-align: center;">Jurnal</th>
+                    <th style="text-align: center;">Perangkat</th>
+                    <th style="width: 175px;">Aksi Admin</th>
                   </tr>
                 </thead>
                 <tbody id="admin-users-tbody">
@@ -1637,7 +1945,21 @@
   </div>
 
   <!-- =====================================================================
-       SECTION 4: PRINT TEMPLATES CONTAINER (F4)
+       MODAL: KONFIRMASI KUSTOM (PENGGANTI confirm() BROWSER)
+       ===================================================================== -->
+  <div id="confirm-modal" class="modal-backdrop hidden">
+    <div class="modal-box" style="max-width: 420px;">
+      <h3 id="confirm-modal-title" class="font-bold mb-2" style="font-size: 1.1rem;">Konfirmasi Tindakan</h3>
+      <p id="confirm-modal-message" class="text-sm text-muted mb-4">Apakah Anda yakin ingin melanjutkan?</p>
+      <div class="flex justify-between gap-2">
+        <button type="button" id="confirm-cancel-btn" class="btn btn-outline" style="flex: 1;">Batal</button>
+        <button type="button" id="confirm-ok-btn" class="btn btn-danger" style="flex: 1;">Ya, Lanjutkan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       SECTION 4: PRINT TEMPLATES CONTAINER (LANDSCAPE F4)
        ===================================================================== -->
   <div id="print-area"></div>
   <div id="toast-container"></div>
@@ -1668,12 +1990,9 @@
       deleteDoc,
       collection,
       getDocs,
-      query,
-      orderBy,
       writeBatch
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    // Konfigurasi Firebase asli proyek administrasikelas-9982f
     const firebaseConfig = {
       apiKey: "AIzaSyDOqV_TCn_Wppgd3q9VGa9RxHJu7yYFTu8",
       authDomain: "administrasikelas-9982f.firebaseapp.com",
@@ -1701,7 +2020,9 @@
     let isAdminUser = false;
     let activeTargetUid = null;
     let adminAllUsersList = [];
+    let adminOwnPhotoBase64 = '';
     let authMode = 'login';
+
     let appSettings = {
       kopBaris1: 'PEMERINTAH KABUPATEN / KOTA',
       kopBaris2: 'DINAS PENDIDIKAN',
@@ -1709,6 +2030,8 @@
       kopBaris3: 'Alamat Lengkap Sekolah',
       logoKiriBase64: '',
       logoKananBase64: '',
+      profilePhotoBase64: '',
+      heroBgPhotoBase64: '',
       namaKelas: 'Kelas I',
       tahunAjaran: '2026 / 2027',
       kotaTandaTangan: 'Jember',
@@ -1719,8 +2042,9 @@
       namaGuru: '',
       nipGuru: ''
     };
+
     let studentsList = [];
-    let currentMonthKey = new Date().toISOString().slice(0, 7); // YYYY-MM
+    let currentMonthKey = new Date().toISOString().slice(0, 7);
     let attendanceData = { records: {}, notes: {} };
     let currentGradesScores = {};
     let journalsList = [];
@@ -1728,6 +2052,28 @@
 
     const ADMIN_EMAILS = ['muhammad0413@admin.sd.belajar.id'];
     const getTargetUid = () => activeTargetUid || (currentUser ? currentUser.uid : null);
+
+    // Custom Confirm Modal Helper
+    function askConfirmation(title, message, okText = 'Ya, Hapus') {
+      return new Promise((resolve) => {
+        const modal = document.getElementById('confirm-modal');
+        document.getElementById('confirm-modal-title').textContent = title;
+        document.getElementById('confirm-modal-message').textContent = message;
+        const okBtn = document.getElementById('confirm-ok-btn');
+        const cancelBtn = document.getElementById('confirm-cancel-btn');
+        okBtn.textContent = okText;
+        modal.classList.remove('hidden');
+
+        const cleanup = (result) => {
+          modal.classList.add('hidden');
+          okBtn.onclick = null;
+          cancelBtn.onclick = null;
+          resolve(result);
+        };
+        okBtn.onclick = () => cleanup(true);
+        cancelBtn.onclick = () => cleanup(false);
+      });
+    }
 
     // Toast Helper
     window.showToast = (message, type = 'success') => {
@@ -1793,6 +2139,8 @@
     };
 
     window.handleLogout = async () => {
+      const ok = await askConfirmation('Keluar Aplikasi', 'Apakah Anda yakin ingin keluar dari sesi E-Admin Kelas?', 'Ya, Keluar');
+      if (!ok) return;
       await signOut(auth);
       showToast('Anda telah keluar dari aplikasi');
     };
@@ -1821,7 +2169,7 @@
         }
         let msg = 'Gagal masuk dengan Google: ' + (err.message || err.code);
         if (err.code === 'auth/popup-closed-by-user') msg = 'Jendela login Google ditutup sebelum selesai.';
-        if (err.code === 'auth/operation-not-allowed') msg = 'Aktifkan penyedia Google di menu Autentikasi Firebase Console terlebih dahulu.';
+        if (err.code === 'auth/operation-not-allowed') msg = 'Aktifkan penyedia Google di Firebase Console terlebih dahulu.';
         if (err.code === 'auth/unauthorized-domain') msg = 'Domain belum didaftarkan di Authorized Domains Firebase.';
         showToast(msg, 'error');
       } finally {
@@ -1829,7 +2177,6 @@
       }
     };
 
-    // Tangani hasil redirect jika login Google menggunakan mode redirect
     getRedirectResult(auth).then(async (result) => {
       if (result && result.user) {
         const user = result.user;
@@ -1861,7 +2208,6 @@
         const adminNav = document.getElementById('nav-admin-panel');
         if (adminNav) adminNav.classList.toggle('hidden', !isAdminUser);
 
-        // Simpan metadata ringkas di dokumen root users/{uid} agar terbaca oleh Admin
         try {
           await setDoc(doc(db, 'users', user.uid), {
             email: user.email || '',
@@ -1901,12 +2247,12 @@
     // =====================================================================
     const MENU_META = {
       dashboard: ['Dashboard Administrasi', 'Ringkasan data kelas & statistik kehadiran realtime'],
-      siswa: ['Data Peserta Didik', 'Kelola biodata siswa, template, impor & ekspor Excel'],
-      absen: ['Absensi Harian & Rekap Bulanan', 'Input kehadiran harian, edit rekap bulanan, dan cetak F4'],
-      nilai: ['Daftar Nilai Semester', 'Penilaian Formatif (TP/LM) & Sumatif Kurikulum Merdeka + Cetak F4'],
-      jurnal: ['Jurnal Harian Mengajar', 'Catatan harian pelaksanaan pembelajaran dan refleksi kelas'],
-      perangkat: ['Perangkat Ajar & Barcode', 'Arsip tautan perangkat ajar dengan generator barcode besar siap cetak'],
-      pengaturan: ['Pengaturan Sekolah & Backup', 'Atur Kop Surat, Logo Kiri-Kanan, Pejabat, serta Backup/Restore data'],
+      siswa: ['Data Peserta Didik', 'Kelola biodata siswa, template, impor, ekspor Excel & cetak Landscape F4'],
+      absen: ['Absensi Harian & Rekap Bulanan', 'Input kehadiran harian, edit rekap bulanan, dan cetak Landscape F4'],
+      nilai: ['Daftar Nilai Semester', 'Penilaian Formatif (TP/LM) & Sumatif Kurikulum Merdeka + Cetak Landscape F4'],
+      jurnal: ['Jurnal Harian Mengajar', 'Catatan harian pelaksanaan pembelajaran dan cetak Landscape F4'],
+      perangkat: ['Perangkat Ajar & Barcode', 'Kelola perangkat ajar, materi, link G-Drive & cetak daftar Landscape F4'],
+      pengaturan: ['Pengaturan Sekolah & Backup', 'Atur Foto Profil, Kop Surat, Logo Kiri-Kanan, Pejabat & Backup/Restore'],
       admin: ['Panel Administrator', 'Akses penuh ke seluruh data kelas dan akun guru terdaftar']
     };
 
@@ -1936,7 +2282,41 @@
     };
 
     // =====================================================================
-    // MODULE 7: SETTINGS & LOGO COMPRESSION & BACKUP/RESTORE
+    // IMAGE COMPRESSION HELPER (FOTO PROFIL, LATAR SEKOLAH, LOGO)
+    // =====================================================================
+    function compressImageFile(file, maxDim = 420, quality = 0.84) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width;
+            let h = img.height;
+            if (w > h && w > maxDim) { h = Math.round((h * maxDim) / w); w = maxDim; }
+            else if (h > maxDim) { w = Math.round((w * maxDim) / h); h = maxDim; }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function getInitials(name) {
+      const parts = String(name || 'GR').trim().split(/\s+/);
+      if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+
+    // =====================================================================
+    // MODULE 7: SETTINGS, PROFILE PHOTO & HERO BACKGROUND
     // =====================================================================
     async function loadSettings() {
       try {
@@ -1944,6 +2324,12 @@
         const snap = await getDoc(doc(db, 'users', uid, 'settings', 'general'));
         if (snap.exists()) {
           appSettings = { ...appSettings, ...snap.data() };
+        }
+        if (isAdminUser && currentUser) {
+          const adminSnap = await getDoc(doc(db, 'users', currentUser.uid, 'settings', 'general'));
+          if (adminSnap.exists() && adminSnap.data().profilePhotoBase64) {
+            adminOwnPhotoBase64 = adminSnap.data().profilePhotoBase64;
+          }
         }
         applySettingsToUI();
       } catch (err) {
@@ -1983,6 +2369,56 @@
         imgKanan.classList.add('hidden');
       }
 
+      // Nama & Inisial Guru/Admin
+      const namaTampil = appSettings.namaGuru || (currentUser && currentUser.displayName) || (currentUser && currentUser.email ? currentUser.email.split('@')[0] : 'Guru Kelas');
+      const initials = getInitials(namaTampil);
+
+      document.getElementById('hero-school-badge').textContent = `${appSettings.namaSekolah || 'E-Admin Kelas'} • ${appSettings.namaKelas || 'Wali Kelas'}`;
+      document.getElementById('hero-welcome-title').textContent = namaTampil;
+      document.getElementById('hero-initials-text').textContent = initials;
+      document.getElementById('hero-role-tag').textContent = `${appSettings.jabatanGuru || 'Guru Kelas'} • ${appSettings.namaKelas || ''}`;
+
+      // Foto Profil Besar di Hero Banner, Topbar, Sidebar, & Settings
+      const photo = appSettings.profilePhotoBase64 || '';
+      const heroImg = document.getElementById('hero-profile-img');
+      const heroPlaceholder = document.getElementById('hero-profile-placeholder');
+      const topbarAvatar = document.getElementById('topbar-avatar');
+      const sidebarAvatar = document.getElementById('sidebar-avatar-box');
+      const settingsAvatar = document.getElementById('settings-avatar-preview');
+
+      if (photo) {
+        heroImg.src = photo;
+        heroImg.classList.remove('hidden');
+        heroPlaceholder.classList.add('hidden');
+        topbarAvatar.innerHTML = `<img src="${photo}" alt="Profil" />`;
+        sidebarAvatar.innerHTML = `<img src="${photo}" alt="Profil" />`;
+        settingsAvatar.innerHTML = `<img src="${photo}" alt="Profil" style="width:100%;height:100%;object-fit:cover;" />`;
+      } else {
+        heroImg.classList.add('hidden');
+        heroPlaceholder.classList.remove('hidden');
+        topbarAvatar.textContent = initials;
+        sidebarAvatar.innerHTML = `<i data-lucide="book-open-check" width="22" height="22"></i>`;
+        settingsAvatar.textContent = initials;
+      }
+
+      // Latar Sekolah di Hero Banner
+      const heroBgImg = document.getElementById('hero-school-bg-img');
+      if (appSettings.heroBgPhotoBase64) {
+        heroBgImg.src = appSettings.heroBgPhotoBase64;
+        heroBgImg.classList.remove('hidden');
+      } else {
+        heroBgImg.classList.add('hidden');
+      }
+
+      // Admin Avatar Box
+      const adminAvatarBox = document.getElementById('admin-avatar-box');
+      if (adminAvatarBox) {
+        const admPic = adminOwnPhotoBase64 || photo;
+        adminAvatarBox.innerHTML = admPic
+          ? `<img src="${admPic}" alt="Admin" style="width:100%;height:100%;object-fit:cover;" />`
+          : 'AD';
+      }
+
       // Update Sidebar & Dashboard Info
       document.getElementById('sidebar-school-name').textContent = appSettings.namaSekolah || 'E-Admin Kelas';
       document.getElementById('sidebar-class-name').textContent = `${appSettings.namaKelas || 'Kelas'} • TA ${appSettings.tahunAjaran || ''}`;
@@ -1997,9 +2433,82 @@
         ? `${appSettings.jabatanGuru || 'Guru Kelas'}: ${appSettings.namaGuru} (NIP. ${appSettings.nipGuru || '-'})`
         : '-';
 
-      const namaTampil = appSettings.namaGuru || (currentUser && currentUser.displayName) || (currentUser && currentUser.email ? currentUser.email.split('@')[0] : 'Guru');
-      document.getElementById('hero-welcome-title').textContent = `Selamat Datang, ${namaTampil}`;
+      lucide.createIcons();
     }
+
+    window.handleProfilePhotoUpload = async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        const compressed = await compressImageFile(file, 480, 0.85);
+        appSettings.profilePhotoBase64 = compressed;
+        if (isAdminUser && getTargetUid() === currentUser.uid) {
+          adminOwnPhotoBase64 = compressed;
+        }
+        await setDoc(doc(db, 'users', getTargetUid(), 'settings', 'general'), {
+          ...appSettings,
+          profilePhotoBase64: compressed
+        }, { merge: true });
+        applySettingsToUI();
+        showToast('Foto profil berhasil diperbarui!');
+      } catch (err) {
+        console.error(err);
+        showToast('Gagal mengunggah foto profil', 'error');
+      } finally {
+        event.target.value = '';
+      }
+    };
+
+    window.clearProfilePhoto = async () => {
+      appSettings.profilePhotoBase64 = '';
+      await setDoc(doc(db, 'users', getTargetUid(), 'settings', 'general'), {
+        profilePhotoBase64: ''
+      }, { merge: true });
+      applySettingsToUI();
+      showToast('Foto profil dihapus');
+    };
+
+    window.handleHeroBgUpload = async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        const compressed = await compressImageFile(file, 960, 0.78);
+        appSettings.heroBgPhotoBase64 = compressed;
+        await setDoc(doc(db, 'users', getTargetUid(), 'settings', 'general'), {
+          ...appSettings,
+          heroBgPhotoBase64: compressed
+        }, { merge: true });
+        applySettingsToUI();
+        showToast('Latar foto sekolah berhasil diperbarui!');
+      } catch (err) {
+        console.error(err);
+        showToast('Gagal mengunggah foto latar sekolah', 'error');
+      } finally {
+        event.target.value = '';
+      }
+    };
+
+    window.handleAdminPhotoUpload = async (event) => {
+      const file = event.target.files[0];
+      if (!file || !currentUser) return;
+      try {
+        const compressed = await compressImageFile(file, 480, 0.85);
+        adminOwnPhotoBase64 = compressed;
+        if (getTargetUid() === currentUser.uid) {
+          appSettings.profilePhotoBase64 = compressed;
+        }
+        await setDoc(doc(db, 'users', currentUser.uid, 'settings', 'general'), {
+          profilePhotoBase64: compressed
+        }, { merge: true });
+        applySettingsToUI();
+        showToast('Foto profil Admin berhasil disimpan!');
+      } catch (err) {
+        console.error(err);
+        showToast('Gagal mengunggah foto Admin', 'error');
+      } finally {
+        event.target.value = '';
+      }
+    };
 
     window.handleLogoUpload = (event, side) => {
       const file = event.target.files[0];
@@ -2075,11 +2584,15 @@
         const usersSnap = await getDocs(collection(db, 'users'));
         adminAllUsersList = [];
 
-        // Pastikan akun saat ini juga terdeteksi meski dokumen root users/{uid} belum dibuat
-        const uidSet = new Set([currentUser.uid]);
-        usersSnap.forEach(d => uidSet.add(d.id));
+        const uidMap = new Map();
+        uidMap.set(currentUser.uid, { email: currentUser.email || '', displayName: currentUser.displayName || '' });
+        usersSnap.forEach(d => uidMap.set(d.id, d.data()));
 
-        for (const uid of uidSet) {
+        let totalStudentsAll = 0;
+        let totalJournalsAll = 0;
+        let totalMaterialsAll = 0;
+
+        for (const [uid, rootData] of uidMap.entries()) {
           const [setSnap, stuSnap, jurSnap, matSnap] = await Promise.all([
             getDoc(doc(db, 'users', uid, 'settings', 'general')),
             getDocs(collection(db, 'users', uid, 'students')),
@@ -2087,8 +2600,13 @@
             getDocs(collection(db, 'users', uid, 'teaching_materials'))
           ]);
           const sData = setSnap.exists() ? setSnap.data() : {};
+          totalStudentsAll += stuSnap.size;
+          totalJournalsAll += jurSnap.size;
+          totalMaterialsAll += matSnap.size;
+
           adminAllUsersList.push({
             uid,
+            email: rootData.email || '',
             settings: sData,
             studentCount: stuSnap.size,
             journalCount: jurSnap.size,
@@ -2096,35 +2614,56 @@
           });
         }
 
-        if (adminAllUsersList.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="9" class="empty-state">Belum ada data akun guru ditemukan.</td></tr>`;
-          return;
-        }
+        document.getElementById('admin-stat-users').textContent = adminAllUsersList.length;
+        document.getElementById('admin-stat-students').textContent = totalStudentsAll;
+        document.getElementById('admin-stat-journals').textContent = totalJournalsAll;
+        document.getElementById('admin-stat-materials').textContent = totalMaterialsAll;
 
-        tbody.innerHTML = adminAllUsersList.map((item, idx) => {
-          const isCurrentTarget = item.uid === getTargetUid();
-          return `
-            <tr style="${isCurrentTarget ? 'background:#eff6ff;' : ''}">
-              <td>${idx + 1}</td>
-              <td class="font-semibold">${escapeHtml(item.settings.namaSekolah || 'Belum diisi')}</td>
-              <td>${escapeHtml(item.settings.namaKelas || '-')} • ${escapeHtml(item.settings.tahunAjaran || '-')}</td>
-              <td>${escapeHtml(item.settings.namaGuru || item.uid.slice(0, 10) + '...')}</td>
-              <td>${escapeHtml(item.settings.namaKS || '-')}</td>
-              <td style="text-align:center; font-weight:700;">${item.studentCount}</td>
-              <td style="text-align:center; font-weight:700;">${item.journalCount}</td>
-              <td style="text-align:center; font-weight:700;">${item.materialCount}</td>
-              <td>
-                <button class="btn ${isCurrentTarget ? 'btn-success' : 'btn-primary'} btn-sm" onclick="switchAdminTargetUser('${item.uid}')">
-                  ${isCurrentTarget ? 'Sedang Dibuka' : 'Buka & Kelola Data'}
-                </button>
-              </td>
-            </tr>
-          `;
-        }).join('');
+        renderAdminUsersTable();
       } catch (err) {
         console.error(err);
         tbody.innerHTML = `<tr><td colspan="9" class="empty-state">Pastikan Firestore Rules mengizinkan akses Admin untuk membaca koleksi users.</td></tr>`;
       }
+    };
+
+    window.renderAdminUsersTable = () => {
+      const tbody = document.getElementById('admin-users-tbody');
+      const kw = (document.getElementById('admin-search-input')?.value || '').toLowerCase();
+      const filtered = adminAllUsersList.filter(item =>
+        (item.settings.namaSekolah || '').toLowerCase().includes(kw) ||
+        (item.settings.namaGuru || '').toLowerCase().includes(kw) ||
+        (item.email || '').toLowerCase().includes(kw) ||
+        (item.settings.namaKelas || '').toLowerCase().includes(kw)
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="empty-state">Tidak ada data akun yang sesuai pencarian.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map((item, idx) => {
+        const isCurrentTarget = item.uid === getTargetUid();
+        return `
+          <tr style="${isCurrentTarget ? 'background:#eff6ff;' : ''}">
+            <td>${idx + 1}</td>
+            <td class="font-semibold">${escapeHtml(item.settings.namaSekolah || 'Belum diisi')}</td>
+            <td>${escapeHtml(item.settings.namaKelas || '-')} • ${escapeHtml(item.settings.tahunAjaran || '-')}</td>
+            <td>
+              <div class="font-semibold">${escapeHtml(item.settings.namaGuru || 'Guru Kelas')}</div>
+              <div class="text-xs text-muted">${escapeHtml(item.email || item.uid.slice(0, 12) + '...')}</div>
+            </td>
+            <td>${escapeHtml(item.settings.namaKS || '-')}</td>
+            <td style="text-align:center; font-weight:700;">${item.studentCount}</td>
+            <td style="text-align:center; font-weight:700;">${item.journalCount}</td>
+            <td style="text-align:center; font-weight:700;">${item.materialCount}</td>
+            <td>
+              <button class="btn ${isCurrentTarget ? 'btn-success' : 'btn-primary'} btn-sm" onclick="switchAdminTargetUser('${item.uid}')">
+                ${isCurrentTarget ? 'Sedang Dibuka' : 'Buka & Kelola'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
     };
 
     window.switchAdminTargetUser = async (uid) => {
@@ -2173,10 +2712,15 @@
       }
     };
 
-    window.restoreAllData = (event) => {
+    window.restoreAllData = async (event) => {
       const file = event.target.files[0];
       if (!file) return;
-      if (!confirm('Proses Restore akan menimpa/menambahkan data dari file backup ke akun Anda. Lanjutkan?')) {
+      const ok = await askConfirmation(
+        'Restore Data Backup',
+        'Proses Restore akan menimpa atau menambahkan data dari file backup ke akun ini. Lanjutkan?',
+        'Ya, Restore Data'
+      );
+      if (!ok) {
         event.target.value = '';
         return;
       }
@@ -2271,8 +2815,8 @@
           <td>${escapeHtml(s.namaOrtu || '-')}</td>
           <td>
             <div class="flex gap-2">
-              <button class="btn btn-outline btn-sm" onclick="editStudent('${s.id}')" title="Edit">Edit</button>
-              <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}')" title="Hapus">Hapus</button>
+              <button class="btn btn-outline btn-sm" onclick="editStudent('${s.id}')">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}')">Hapus</button>
             </div>
           </td>
         </tr>
@@ -2340,7 +2884,8 @@
     };
 
     window.deleteStudent = async (id) => {
-      if (!confirm('Hapus data siswa ini?')) return;
+      const ok = await askConfirmation('Hapus Data Siswa', 'Data peserta didik ini akan dihapus secara permanen. Lanjutkan?');
+      if (!ok) return;
       try {
         await deleteDoc(doc(db, 'users', getTargetUid(), 'students', id));
         await loadStudents();
@@ -2351,7 +2896,6 @@
       }
     };
 
-    // Excel Operations for Students
     window.downloadStudentTemplate = () => {
       const rows = [
         {
@@ -2434,7 +2978,7 @@
     };
 
     // =====================================================================
-    // MODULE 3: ABSEN HARIAN & REKAP BULANAN (EDITABLE & CETAK F4)
+    // MODULE 3: ABSEN HARIAN & REKAP BULANAN
     // =====================================================================
     async function loadAttendance(monthKey) {
       currentMonthKey = monthKey;
@@ -2732,7 +3276,6 @@
       }
     };
 
-    // Excel Template / Import / Export for Grades
     window.downloadGradesTemplate = () => {
       const list = studentsList.length > 0 ? studentsList : [{ noUrut: 1, noInduk: '1001', nama: 'NAMA SISWA' }];
       const rows = list.map((s, idx) => {
@@ -2915,7 +3458,8 @@
     };
 
     window.deleteJournal = async (id) => {
-      if (!confirm('Hapus catatan jurnal ini?')) return;
+      const ok = await askConfirmation('Hapus Jurnal Harian', 'Catatan jurnal mengajar ini akan dihapus permanen. Lanjutkan?');
+      if (!ok) return;
       try {
         await deleteDoc(doc(db, 'users', getTargetUid(), 'journals', id));
         await loadJournals();
@@ -2927,34 +3471,58 @@
     };
 
     // =====================================================================
-    // MODULE 6: PERANGKAT AJAR + BARCODE BESAR OTOMATIS + CETAK
+    // MODULE 6: PERANGKAT AJAR + MATERI + BARCODE + CETAK LANDSCAPE F4
     // =====================================================================
     async function loadTeachingMaterials() {
       const snap = await getDocs(collection(db, 'users', getTargetUid(), 'teaching_materials'));
       materialsList = [];
       snap.forEach(d => materialsList.push({ id: d.id, ...d.data() }));
+      materialsList.sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
       renderTeachingMaterials();
     }
 
     window.renderTeachingMaterials = () => {
+      const tbody = document.getElementById('materials-table-tbody');
       const container = document.getElementById('materials-container');
+
       if (materialsList.length === 0) {
-        container.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;">Belum ada perangkat ajar. Masukkan nama dokumen dan tautan di atas untuk menghasilkan Barcode Besar otomatis.</div>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="empty-state">Belum ada perangkat ajar. Tambahkan melalui formulir di atas.</td></tr>`;
+        container.innerHTML = '';
         return;
       }
 
-      container.innerHTML = materialsList.map(m => `
+      tbody.innerHTML = materialsList.map((m, idx) => `
+        <tr>
+          <td style="text-align: center; font-weight: 700;">${idx + 1}</td>
+          <td class="font-semibold">${escapeHtml(m.judul)}</td>
+          <td>${escapeHtml(m.materi || '-')}</td>
+          <td><span class="text-xs font-semibold" style="background: var(--primary-soft); color: var(--primary); padding: 3px 8px; border-radius: 999px;">${escapeHtml(m.jenis)}</span></td>
+          <td style="max-width: 240px; word-break: break-all;">
+            <a href="${escapeHtml(m.tautan)}" target="_blank" rel="noopener" style="color: var(--primary); text-decoration: underline; font-size: 0.8rem;">
+              ${escapeHtml(m.tautan)}
+            </a>
+          </td>
+          <td>
+            <div class="flex gap-2">
+              <button class="btn btn-primary btn-sm" onclick="printMaterialBarcode('${m.id}')">
+                <i data-lucide="printer" width="14"></i> Cetak Barcode
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="deleteTeachingMaterial('${m.id}')">Hapus</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      container.innerHTML = materialsList.map((m, idx) => `
         <div class="barcode-card">
           <span class="text-xs font-bold" style="background: var(--primary-soft); color: var(--primary); padding: 4px 10px; border-radius: 999px;">
-            ${escapeHtml(m.jenis)}
+            #${idx + 1} • ${escapeHtml(m.jenis)}
           </span>
           <h4 class="font-bold mt-2" style="font-size: 1rem;">${escapeHtml(m.judul)}</h4>
+          ${m.materi ? `<div class="text-xs text-muted mt-2">Materi: <strong>${escapeHtml(m.materi)}</strong></div>` : ''}
           <div id="qr-target-${m.id}" class="qr-box"></div>
-          <div class="flex gap-2 mt-2" style="width: 100%; flex-wrap: wrap;">
-            <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="printMaterialBarcode('${m.id}', 'portrait')">
-              <i data-lucide="printer" width="15"></i> Cetak Portrait F4
-            </button>
-            <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="printMaterialBarcode('${m.id}', 'landscape')">
+          <div class="flex gap-2 mt-2" style="width: 100%;">
+            <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="printMaterialBarcode('${m.id}')">
               <i data-lucide="printer" width="15"></i> Cetak Landscape F4
             </button>
             <button class="btn btn-danger btn-sm" onclick="deleteTeachingMaterial('${m.id}')" title="Hapus">
@@ -2966,15 +3534,14 @@
 
       lucide.createIcons();
 
-      // Render High-Res QR Code inside each card
       materialsList.forEach(m => {
         const el = document.getElementById(`qr-target-${m.id}`);
         if (el) {
           el.innerHTML = '';
           new QRCode(el, {
             text: m.tautan,
-            width: 190,
-            height: 190,
+            width: 185,
+            height: 185,
             colorDark: '#0f172a',
             colorLight: '#ffffff',
             correctLevel: QRCode.CorrectLevel.H
@@ -2987,6 +3554,7 @@
       e.preventDefault();
       const payload = {
         judul: document.getElementById('mat-judul').value.trim(),
+        materi: document.getElementById('mat-materi').value.trim(),
         jenis: document.getElementById('mat-jenis').value,
         tautan: document.getElementById('mat-tautan').value.trim(),
         createdAt: new Date().toISOString()
@@ -3003,7 +3571,8 @@
     };
 
     window.deleteTeachingMaterial = async (id) => {
-      if (!confirm('Hapus perangkat ajar ini?')) return;
+      const ok = await askConfirmation('Hapus Perangkat Ajar', 'Dokumen perangkat ajar ini akan dihapus permanen. Lanjutkan?');
+      if (!ok) return;
       try {
         await deleteDoc(doc(db, 'users', getTargetUid(), 'teaching_materials', id));
         await loadTeachingMaterials();
@@ -3032,15 +3601,15 @@
     }
 
     // =====================================================================
-    // PRINT F4 BUILDERS (SESUAI REFERENSI GAMBAR 1, GAMBAR 2 & BARCODE)
+    // PRINT LANDSCAPE F4 BUILDERS (KOP SURAT STANDAR + TANDA TANGAN KS & GURU)
     // =====================================================================
     function buildKopHTML() {
       const logoKiri = appSettings.logoKiriBase64
         ? `<img src="${appSettings.logoKiriBase64}" class="print-kop-logo" />`
-        : `<div style="width:68px;"></div>`;
+        : `<div style="width:56px;"></div>`;
       const logoKanan = appSettings.logoKananBase64
         ? `<img src="${appSettings.logoKananBase64}" class="print-kop-logo" />`
-        : `<div style="width:68px;"></div>`;
+        : `<div style="width:56px;"></div>`;
 
       return `
         <div class="print-kop">
@@ -3054,15 +3623,6 @@
           ${logoKanan}
         </div>
       `;
-    }
-
-    function setPrintOrientation(orientation = 'portrait') {
-      const styleTag = document.getElementById('dynamic-print-orientation');
-      if (orientation === 'landscape') {
-        styleTag.textContent = `@media print { @page { size: 330mm 215mm; margin: 10mm 12mm; } }`;
-      } else {
-        styleTag.textContent = `@media print { @page { size: 215mm 330mm; margin: 10mm 12mm; } }`;
-      }
     }
 
     function buildSignaturesHTML(jabatanKananCustom = '') {
@@ -3089,13 +3649,51 @@
       `;
     }
 
-    // 1. Cetak Absen F4 (Menyerupai Gambar 1)
+    // 1. Cetak Data Siswa Landscape F4
+    window.printStudentsF4 = () => {
+      const rowsHtml = studentsList.map((s, idx) => `
+        <tr>
+          <td>${s.noUrut || idx + 1}</td>
+          <td>${escapeHtml(s.noInduk || '-')}</td>
+          <td>${escapeHtml(s.nisn || '-')}</td>
+          <td class="text-left">${escapeHtml(s.nama)}</td>
+          <td>${escapeHtml(s.jenisKelamin || 'L')}</td>
+          <td class="text-left">${escapeHtml(s.tempatLahir || '')}${s.tanggalLahir ? ', ' + s.tanggalLahir : ''}</td>
+          <td class="text-left">${escapeHtml(s.namaOrtu || '-')}</td>
+        </tr>
+      `).join('');
+
+      document.getElementById('print-area').innerHTML = `
+        ${buildKopHTML()}
+        <div class="print-doc-title">
+          DAFTAR PESERTA DIDIK ${escapeHtml(appSettings.namaSekolah || '')}<br/>
+          ${escapeHtml(appSettings.namaKelas || '')} • TAHUN AJARAN ${escapeHtml(appSettings.tahunAjaran || '')}
+        </div>
+        <table class="print-table">
+          <thead>
+            <tr>
+              <th style="width:35px;">NO</th>
+              <th style="width:90px;">NO INDUK</th>
+              <th style="width:105px;">NISN</th>
+              <th>NAMA LENGKAP SISWA</th>
+              <th style="width:45px;">L/P</th>
+              <th>TEMPAT, TANGGAL LAHIR</th>
+              <th>NAMA ORANG TUA / WALI</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+        ${buildSignaturesHTML()}
+      `;
+      window.print();
+    };
+
+    // 2. Cetak Absen Landscape F4
     window.printAbsenF4 = () => {
-      setPrintOrientation('portrait');
       const [yr, mo] = currentMonthKey.split('-');
       const bulanNama = MONTHS_ID[parseInt(mo, 10) - 1];
       let dayTh = '';
-      for (let d = 1; d <= 31; d++) dayTh += `<th style="width:17px;">${d}</th>`;
+      for (let d = 1; d <= 31; d++) dayTh += `<th style="width:19px;">${d}</th>`;
 
       let totalH = 0, totalSIA = 0;
       const rowsHtml = studentsList.map((s, idx) => {
@@ -3131,27 +3729,26 @@
         ${buildKopHTML()}
         <div class="print-doc-title">
           DAFTAR HADIR SISWA ${escapeHtml(appSettings.namaSekolah || '')}<br/>
-          TAHUN AJARAN ${escapeHtml(appSettings.tahunAjaran || '')}<br/>
-          ${escapeHtml(appSettings.namaKelas || '')}
+          ${escapeHtml(appSettings.namaKelas || '')} • TAHUN AJARAN ${escapeHtml(appSettings.tahunAjaran || '')}
         </div>
-        <div style="font-size:10pt; font-weight:700; margin-bottom:6px;">Bulan : ${bulanNama} ${yr}</div>
+        <div style="font-size:9.5pt; font-weight:700; margin-bottom:5px;">Bulan : ${bulanNama} ${yr}</div>
         <table class="print-table">
           <thead>
             <tr>
               <th rowspan="2" style="width:28px;">NO</th>
-              <th rowspan="2" style="min-width:145px;">NAMA</th>
+              <th rowspan="2" style="min-width:165px;">NAMA</th>
               <th colspan="31">TANGGAL</th>
               <th rowspan="2" style="width:24px;">S</th>
               <th rowspan="2" style="width:24px;">I</th>
               <th rowspan="2" style="width:24px;">A</th>
               <th rowspan="2" style="width:28px;">Jml</th>
-              <th rowspan="2" style="width:65px;">KET</th>
+              <th rowspan="2" style="width:85px;">KET</th>
             </tr>
             <tr>${dayTh}</tr>
           </thead>
           <tbody>${rowsHtml}</tbody>
         </table>
-        <div style="text-align:center; font-size:10pt; margin-top:12px;">
+        <div style="text-align:center; font-size:9.5pt; margin-top:8px;">
           Presentase Absen Bulan ini &nbsp;&nbsp; = &nbsp;&nbsp; <strong>${pct}</strong>
         </div>
         ${buildSignaturesHTML()}
@@ -3159,9 +3756,8 @@
       window.print();
     };
 
-    // 2. Cetak Daftar Nilai F4 (Menyerupai Gambar 2)
+    // 3. Cetak Daftar Nilai Landscape F4
     window.printGradesF4 = () => {
-      setPrintOrientation('landscape');
       const sem = document.getElementById('grade-semester').value;
       const mapel = document.getElementById('grade-subject').value;
 
@@ -3193,10 +3789,9 @@
       document.getElementById('print-area').innerHTML = `
         ${buildKopHTML()}
         <div class="print-doc-title">
-          DAFTAR NILAI SEMESTER ${sem}<br/>
-          ${escapeHtml(appSettings.namaSekolah || '')}
+          DAFTAR NILAI SEMESTER ${sem} • ${escapeHtml(appSettings.namaSekolah || '')}
         </div>
-        <table style="font-size:9.5pt; font-weight:700; margin-bottom:8px;">
+        <table style="font-size:9pt; font-weight:700; margin-bottom:6px;">
           <tr><td style="width:140px;">KELAS</td><td>: ${escapeHtml(appSettings.namaKelas || '')}</td></tr>
           <tr><td>MATA PELAJARAN</td><td>: ${escapeHtml(mapel)}</td></tr>
           <tr><td>TAHUN AJARAN</td><td>: ${escapeHtml(appSettings.tahunAjaran || '')}</td></tr>
@@ -3204,9 +3799,9 @@
         <table class="print-table" style="font-size:7.5pt;">
           <thead>
             <tr>
-              <th rowspan="3">NO URUT</th>
+              <th rowspan="3">NO</th>
               <th rowspan="3">NO INDUK</th>
-              <th rowspan="3" style="min-width:140px;">NAMA</th>
+              <th rowspan="3" style="min-width:145px;">NAMA</th>
               <th colspan="20">FORMATIF</th>
               <th colspan="5">SUMATIF LINGKUP MATERI</th>
               <th rowspan="3">SAS</th>
@@ -3234,7 +3829,7 @@
           </thead>
           <tbody>${rowsHtml}</tbody>
         </table>
-        <div style="font-size:8.5pt; margin-top:8px;">
+        <div style="font-size:8.5pt; margin-top:6px;">
           <strong>Keterangan :</strong> TP = Tujuan Pembelajaran &nbsp;|&nbsp; LM = Lingkup Materi &nbsp;|&nbsp; SAS = Sumatif Akhir Semester
         </div>
         ${buildSignaturesHTML()}
@@ -3242,9 +3837,8 @@
       window.print();
     };
 
-    // 3. Cetak Jurnal Harian F4
+    // 4. Cetak Jurnal Harian Landscape F4
     window.printJournalsF4 = () => {
-      setPrintOrientation('portrait');
       const filterMonth = document.getElementById('journal-filter-month').value;
       const filtered = filterMonth
         ? journalsList.filter(j => (j.tanggal || '').startsWith(filterMonth))
@@ -3271,13 +3865,13 @@
         <table class="print-table">
           <thead>
             <tr>
-              <th style="width:30px;">NO</th>
-              <th style="width:85px;">TANGGAL</th>
-              <th style="width:55px;">JAM KE</th>
-              <th style="width:110px;">MATA PELAJARAN</th>
+              <th style="width:32px;">NO</th>
+              <th style="width:90px;">TANGGAL</th>
+              <th style="width:60px;">JAM KE</th>
+              <th style="width:130px;">MATA PELAJARAN</th>
               <th>MATERI / TUJUAN PEMBELAJARAN</th>
               <th>KEGIATAN PEMBELAJARAN</th>
-              <th style="width:110px;">REFLEKSI</th>
+              <th style="width:130px;">REFLEKSI</th>
             </tr>
           </thead>
           <tbody>${rowsHtml}</tbody>
@@ -3287,31 +3881,88 @@
       window.print();
     };
 
-    // 4. Cetak Barcode Besar Perangkat Ajar F4 (Portrait & Landscape)
-    window.printMaterialBarcode = (id, orientation = 'portrait') => {
+    // 5. Cetak Semua Daftar Perangkat Ajar Berurutan (Landscape F4)
+    // Kolom: No, Nama Perangkat Ajar, Materi, Jenis Dokumen, Link G Drive (beserta QR Code & Pengesahan KS dan Guru)
+    window.printAllMaterialsF4 = () => {
+      if (materialsList.length === 0) {
+        return showToast('Belum ada data perangkat ajar untuk dicetak', 'error');
+      }
+
+      const rowsHtml = materialsList.map((m, idx) => `
+        <tr>
+          <td style="width: 34px; font-weight: 700;">${idx + 1}</td>
+          <td class="text-left" style="font-weight: 700;">${escapeHtml(m.judul)}</td>
+          <td class="text-left">${escapeHtml(m.materi || '-')}</td>
+          <td>${escapeHtml(m.jenis)}</td>
+          <td class="text-left" style="word-break: break-all; font-size: 8pt;">${escapeHtml(m.tautan)}</td>
+          <td style="width: 74px; padding: 4px;">
+            <div id="print-list-qr-${m.id}" style="display: inline-block;"></div>
+          </td>
+        </tr>
+      `).join('');
+
+      document.getElementById('print-area').innerHTML = `
+        ${buildKopHTML()}
+        <div class="print-doc-title">
+          DAFTAR INVENTARIS PERANGKAT PEMBELAJARAN DIGITAL<br/>
+          ${escapeHtml(appSettings.namaKelas || '')} • TAHUN AJARAN ${escapeHtml(appSettings.tahunAjaran || '')}
+        </div>
+        <table class="print-table">
+          <thead>
+            <tr>
+              <th style="width: 34px;">NO</th>
+              <th>NAMA PERANGKAT AJAR</th>
+              <th>MATERI</th>
+              <th style="width: 155px;">JENIS DOKUMEN</th>
+              <th>LINK G DRIVE</th>
+              <th style="width: 74px;">BARCODE</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+        ${buildSignaturesHTML()}
+      `;
+
+      materialsList.forEach(m => {
+        const el = document.getElementById(`print-list-qr-${m.id}`);
+        if (el) {
+          new QRCode(el, {
+            text: m.tautan,
+            width: 58,
+            height: 58,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        }
+      });
+
+      setTimeout(() => window.print(), 280);
+    };
+
+    // 6. Cetak Barcode Satuan Perangkat Ajar (Landscape F4)
+    window.printMaterialBarcode = (id) => {
       const mat = materialsList.find(m => m.id === id);
       if (!mat) return;
-
-      setPrintOrientation(orientation);
-      const qrSize = orientation === 'landscape' ? 240 : 340;
 
       const printArea = document.getElementById('print-area');
       printArea.innerHTML = `
         ${buildKopHTML()}
-        <div class="print-doc-title" style="margin-top:${orientation === 'landscape' ? '8px' : '18px'}; font-size:${orientation === 'landscape' ? '12.5pt' : '14pt'};">
+        <div class="print-doc-title">
           DOKUMEN PERANGKAT PEMBELAJARAN DIGITAL<br/>
           ${escapeHtml(appSettings.namaKelas || '')} • TAHUN AJARAN ${escapeHtml(appSettings.tahunAjaran || '')}
         </div>
-        <div class="print-barcode-sheet ${orientation}">
-          <div style="font-size:12pt; font-weight:700; text-transform:uppercase; margin-bottom:4px;">
+        <div class="print-barcode-sheet">
+          <div style="font-size:11pt; font-weight:700; text-transform:uppercase; margin-bottom:2px;">
             ${escapeHtml(mat.jenis)}
           </div>
-          <div style="font-size:${orientation === 'landscape' ? '14pt' : '16pt'}; font-weight:700; margin-bottom:10px;">
+          <div style="font-size:14pt; font-weight:700; margin-bottom:2px;">
             ${escapeHtml(mat.judul)}
           </div>
-          <div id="print-big-qr" style="display:flex; justify-content:center; margin:${orientation === 'landscape' ? '10px' : '18px'} 0;"></div>
-          <div style="font-size:10pt; margin-top:8px;">
-            Pindai (Scan) QR Code / Barcode di atas menggunakan kamera ponsel untuk membuka dokumen perangkat ajar.
+          ${mat.materi ? `<div style="font-size:10.5pt; margin-bottom:6px;">Materi: <strong>${escapeHtml(mat.materi)}</strong></div>` : ''}
+          <div id="print-big-qr" style="display:flex; justify-content:center; margin:8px 0;"></div>
+          <div style="font-size:9pt; margin-top:4px; word-break:break-all;">
+            Link G Drive: ${escapeHtml(mat.tautan)}
           </div>
         </div>
         ${buildSignaturesHTML()}
@@ -3319,8 +3970,8 @@
 
       new QRCode(document.getElementById('print-big-qr'), {
         text: mat.tautan,
-        width: qrSize,
-        height: qrSize,
+        width: 210,
+        height: 210,
         colorDark: '#000000',
         colorLight: '#ffffff',
         correctLevel: QRCode.CorrectLevel.H
@@ -3340,7 +3991,6 @@
         .replace(/'/g, '&#039;');
     }
 
-    // Inisialisasi seluruh ikon Lucide
     if (window.lucide) {
       lucide.createIcons();
     }
