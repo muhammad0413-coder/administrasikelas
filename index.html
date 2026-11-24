@@ -1654,6 +1654,8 @@
       createUserWithEmailAndPassword,
       GoogleAuthProvider,
       signInWithPopup,
+      signInWithRedirect,
+      getRedirectResult,
       signOut
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
@@ -1686,7 +1688,13 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const googleProvider = new GoogleAuthProvider();
+    googleProvider.setCustomParameters({ prompt: 'select_account' });
     const db = getFirestore(app);
+
+    const MONTHS_ID = [
+      'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+      'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    ];
 
     // Global State
     let currentUser = null;
@@ -1768,8 +1776,13 @@
         }
         showToast('Berhasil masuk dengan akun Google');
       } catch (err) {
-        console.error(err);
-        let msg = 'Gagal masuk dengan Google.';
+        console.error('Google Login Error:', err);
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request') {
+          showToast('Pop-up diblokir browser, mengalihkan ke halaman login Google...');
+          await signInWithRedirect(auth, googleProvider);
+          return;
+        }
+        let msg = 'Gagal masuk dengan Google: ' + (err.message || err.code);
         if (err.code === 'auth/popup-closed-by-user') msg = 'Jendela login Google ditutup sebelum selesai.';
         if (err.code === 'auth/operation-not-allowed') msg = 'Aktifkan penyedia Google di menu Autentikasi Firebase Console terlebih dahulu.';
         if (err.code === 'auth/unauthorized-domain') msg = 'Domain belum didaftarkan di Authorized Domains Firebase.';
@@ -1779,64 +1792,23 @@
       }
     };
 
-    window.handleAuthSubmit = async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('auth-email').value.trim();
-      const password = document.getElementById('auth-password').value;
-      const name = document.getElementById('auth-name').value.trim();
-      const btn = document.getElementById('auth-submit-btn');
-
-      btn.disabled = true;
-      try {
-        if (authMode === 'login') {
-          await signInWithEmailAndPassword(auth, email, password);
-          showToast('Berhasil masuk ke sistem');
-        } else {
-          const cred = await createUserWithEmailAndPassword(auth, email, password);
-          if (name) {
-            await setDoc(doc(db, 'users', cred.user.uid, 'settings', 'general'), {
-              ...appSettings,
-              namaGuru: name
-            }, { merge: true });
-          }
-          showToast('Akun guru berhasil dibuat');
+    // Tangani hasil redirect jika login Google menggunakan mode redirect
+    getRedirectResult(auth).then(async (result) => {
+      if (result && result.user) {
+        const user = result.user;
+        const settingsRef = doc(db, 'users', user.uid, 'settings', 'general');
+        const snap = await getDoc(settingsRef);
+        if (!snap.exists() && user.displayName) {
+          await setDoc(settingsRef, {
+            ...appSettings,
+            namaGuru: user.displayName
+          }, { merge: true });
         }
-      } catch (err) {
-        console.error(err);
-        let msg = 'Terjadi kesalahan autentikasi.';
-        if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') msg = 'Email atau kata sandi salah.';
-        if (err.code === 'auth/email-already-in-use') msg = 'Email sudah terdaftar. Silakan masuk.';
-        if (err.code === 'auth/weak-password') msg = 'Kata sandi minimal 6 karakter.';
-        showToast(msg, 'error');
-      } finally {
-        btn.disabled = false;
+        showToast('Berhasil masuk dengan akun Google');
       }
-    };
-
-    window.handleLogout = async () => {
-      await signOut(auth);
-      showToast('Anda telah keluar dari aplikasi');
-    };
-
-    onAuthStateChanged(auth, async (user) => {
-      currentUser = user;
-      if (user) {
-        activeTargetUid = user.uid;
-        isAdminUser = ADMIN_EMAILS.includes((user.email || '').toLowerCase()) ||
-          (user.email || '').toLowerCase().includes('admin');
-        document.getElementById('nav-admin-panel').classList.toggle('hidden', !isAdminUser);
-        document.getElementById('auth-section').classList.add('hidden');
-        document.getElementById('app-section').classList.remove('hidden');
-        document.getElementById('user-email-display').textContent = isAdminUser
-          ? `${user.email} (ADMIN)`
-          : user.email;
-        await initUserData();
-        if (isAdminUser) await loadAllAdminUsers();
-      } else {
-        activeTargetUid = null;
-        isAdminUser = false;
-        document.getElementById('app-section').classList.add('hidden');
-        document.getElementById('auth-section').classList.remove('hidden');
+    }).catch((err) => {
+      if (err && err.code) {
+        showToast('Gagal masuk Google: ' + err.message, 'error');
       }
     });
 
@@ -1888,25 +1860,6 @@
       }
       if (menuKey === 'nilai') renderGradesTable();
       if (menuKey === 'admin' && isAdminUser) loadAllAdminUsers();
-    };
-
-    window.navigateTo = (menuKey) => {
-      document.querySelectorAll('.nav-item').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.menu === menuKey);
-      });
-      document.querySelectorAll('.module-view').forEach(sec => sec.classList.add('hidden'));
-      document.getElementById(`view-${menuKey}`).classList.remove('hidden');
-
-      document.getElementById('topbar-title').textContent = MENU_META[menuKey][0];
-      document.getElementById('topbar-subtitle').textContent = MENU_META[menuKey][1];
-      toggleSidebar(false);
-
-      if (menuKey === 'dashboard') updateDashboardStats();
-      if (menuKey === 'absen') {
-        renderAbsenHarianTable();
-        renderAbsenBulananTable();
-      }
-      if (menuKey === 'nilai') renderGradesTable();
     };
 
     window.toggleSidebar = (open) => {
@@ -1978,55 +1931,6 @@
 
       const namaTampil = appSettings.namaGuru || (currentUser && currentUser.displayName) || (currentUser && currentUser.email ? currentUser.email.split('@')[0] : 'Guru');
       document.getElementById('hero-welcome-title').textContent = `Selamat Datang, ${namaTampil}`;
-    }
-        applySettingsToUI();
-      } catch (err) {
-        console.error('Gagal memuat pengaturan:', err);
-      }
-    }
-
-    function applySettingsToUI() {
-      document.getElementById('set-kop1').value = appSettings.kopBaris1 || '';
-      document.getElementById('set-kop2').value = appSettings.kopBaris2 || '';
-      document.getElementById('set-sekolah').value = appSettings.namaSekolah || '';
-      document.getElementById('set-kop3').value = appSettings.kopBaris3 || '';
-      document.getElementById('set-kelas').value = appSettings.namaKelas || '';
-      document.getElementById('set-ta').value = appSettings.tahunAjaran || '';
-      document.getElementById('set-kota').value = appSettings.kotaTandaTangan || '';
-      document.getElementById('set-ks-nama').value = appSettings.namaKS || '';
-      document.getElementById('set-ks-nip').value = appSettings.nipKS || '';
-      document.getElementById('set-guru-nama').value = appSettings.namaGuru || '';
-      document.getElementById('set-guru-nip').value = appSettings.nipGuru || '';
-
-      // Logo Previews
-      const imgKiri = document.getElementById('preview-logo-kiri');
-      if (appSettings.logoKiriBase64) {
-        imgKiri.src = appSettings.logoKiriBase64;
-        imgKiri.classList.remove('hidden');
-      } else {
-        imgKiri.classList.add('hidden');
-      }
-
-      const imgKanan = document.getElementById('preview-logo-kanan');
-      if (appSettings.logoKananBase64) {
-        imgKanan.src = appSettings.logoKananBase64;
-        imgKanan.classList.remove('hidden');
-      } else {
-        imgKanan.classList.add('hidden');
-      }
-
-      // Update Sidebar & Dashboard Info
-      document.getElementById('sidebar-school-name').textContent = appSettings.namaSekolah || 'E-Admin Kelas';
-      document.getElementById('sidebar-class-name').textContent = `${appSettings.namaKelas || 'Kelas'} • TA ${appSettings.tahunAjaran || ''}`;
-      document.getElementById('badge-ta').textContent = `${appSettings.namaKelas || ''} | TA ${appSettings.tahunAjaran || ''}`;
-
-      document.getElementById('dash-sekolah').textContent = appSettings.namaSekolah || '-';
-      document.getElementById('dash-kelas-ta').textContent = `${appSettings.namaKelas || '-'} (${appSettings.tahunAjaran || '-'})`;
-      document.getElementById('dash-ks').textContent = appSettings.namaKS ? `${appSettings.namaKS} (NIP. ${appSettings.nipKS || '-'})` : '-';
-      document.getElementById('dash-guru').textContent = appSettings.namaGuru ? `${appSettings.namaGuru} (NIP. ${appSettings.nipGuru || '-'})` : '-';
-      if (appSettings.namaGuru) {
-        document.getElementById('hero-welcome-title').textContent = `Selamat Datang, ${appSettings.namaGuru}`;
-      }
     }
 
     window.handleLogoUpload = (event, side) => {
@@ -3071,6 +2975,19 @@
         : `<div style="width:68px;"></div>`;
 
       return `
+        <div class="print-kop">
+          ${logoKiri}
+          <div class="print-kop-text">
+            <h2>${escapeHtml(appSettings.kopBaris1 || '')}</h2>
+            <h2>${escapeHtml(appSettings.kopBaris2 || '')}</h2>
+            <h1>${escapeHtml(appSettings.namaSekolah || '')}</h1>
+            <p>${escapeHtml(appSettings.kopBaris3 || '')}</p>
+          </div>
+          ${logoKanan}
+        </div>
+      `;
+    }
+
     function setPrintOrientation(orientation = 'portrait') {
       const styleTag = document.getElementById('dynamic-print-orientation');
       if (orientation === 'landscape') {
@@ -3353,6 +3270,11 @@
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+    }
+
+    // Inisialisasi seluruh ikon Lucide
+    if (window.lucide) {
+      lucide.createIcons();
     }
   </script>
 </body>
